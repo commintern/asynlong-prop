@@ -50,13 +50,16 @@ arma::vec countprofun_C(const arma::vec& counttime, const arma::vec& externalTim
 }
 
 // [[Rcpp::export]]
-arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, const int& p){
+arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, const unsigned int& p){
   arma::uword i;
   arma::uword nrow = countprocess.size();
   arma::uword ncol = covMat.n_cols;
   arma::cube res(nrow,ncol,p+1);
-  for(i=0;i<nrow;i++){
-    res.subcube(i,0,0,i,ncol-1,p-1) = covMat;
+  // for(i=0;i<nrow;i++){
+  //   res.subcube(i,0,0,i,ncol-1,p-1) = covMat;
+  // }
+  for(i=0;i<p;i++){
+    res.slice(i).each_row() = covMat.row(i);
   }
   res.slice(p).each_col() = countprocess;
 
@@ -122,6 +125,7 @@ Rcpp::List longest_c(const arma::rowvec& gamma,
       // Genrate N_i(T_{lu})
       temp_countprocess_l = countprofun_C(temp_meas_time_i, temp_meas_time_l);
 
+
       // Get X_i(R_(ik),T_(lu))
       Xmat_list(l*n + i)  = Xgen_C(temp_cov_i,temp_countprocess_l,p);
 
@@ -153,6 +157,8 @@ Rcpp::List longest_c(const arma::rowvec& gamma,
   // TODO futher explain
   // Calculate \bar{XXt}
   //Rcpp::Rcout <<  "2.5step" <<endl;
+  temp_vec1 = vec(p);
+  temp_vec2 = vec(p);
   for(i=0;i<n;i++){
     //temp_cube = arma::cube(p+1,p+1,KerexpgamZ_list(i*n+0).n_rows);
     Jn = KerexpgamZ_list(i*n +0).n_rows;
