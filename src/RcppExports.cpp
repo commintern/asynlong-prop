@@ -19,14 +19,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // Xgen_C
-arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, const int& p);
+arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, const unsigned int& p);
 RcppExport SEXP _asynlong_Xgen_C(SEXP covMatSEXP, SEXP countprocessSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::mat& >::type covMat(covMatSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type countprocess(countprocessSEXP);
-    Rcpp::traits::input_parameter< const int& >::type p(pSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
     rcpp_result_gen = Rcpp::wrap(Xgen_C(covMat, countprocess, p));
     return rcpp_result_gen;
 END_RCPP
