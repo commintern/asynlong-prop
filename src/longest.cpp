@@ -50,7 +50,7 @@ arma::vec countprofun_C(const arma::vec& counttime, const arma::vec& externalTim
 }
 
 // [[Rcpp::export]]
-arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, int p){
+arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, const int& p){
   arma::uword i;
   arma::uword nrow = countprocess.size();
   arma::uword ncol = covMat.n_cols;
@@ -248,8 +248,8 @@ Rcpp::List longest_c(const arma::rowvec& gamma,
       for(j=0;j<Jn;j++){
         for(k=0;k<Kn;k++){
           temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
-          temp = Xbar_list(i).row(j);
-          temp0 = temp0 + temp_kermat(j,k)*(XXtbar_list(i).slice(j) - temp.t() * temp);
+          //temp = Xbar_list(i).row(j);
+          temp0 = temp0 + temp_kermat(j,k)*(XXtbar_list(i).slice(j) - Xbar_list(i).row(j).t() * Xbar_list(i).row(j));
         }
       }
   }

@@ -43,7 +43,7 @@ library("reda")
 library("extraDistr")
 
 set.seed(8102)
-nsample <- 100
+nsample <- 300
 
 
 infl <- 2
@@ -62,10 +62,16 @@ simdatasam <-
     ),
     simplify = F
   )
-testres <- estasy_test(simdatasam, kernelh, nsample ^ (-0.8), nsample, 1)
+testres <- estasy(simdatasam, kernelh, nsample ^ (-0.9), nsample, 1)
 testres[[1]]
 plot(testres[[3]], typ = "l")
 abline(0, 2*infl, col = "red")
+
+
+tt <- simdataone(nsample, 1, 2, 6,2,function(x) exp(sin(2 * pi * x)),2,1,1,1)
+
+
+ttres <- estasy_test(tt, NULL, nsample ^ (-0.9), nsample, 1)
 
 # Test of longitudinal data estimation
 
@@ -99,7 +105,7 @@ testlong[[1]]
 
 
 
-
+nsample <-  30
 infl <- 2
 p <- 2
 simdatasam <-

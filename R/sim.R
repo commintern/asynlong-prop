@@ -1,7 +1,7 @@
 
 # TODO, Do I need to sample censoring time
 simdataone <- function(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor) {
-  simdatasam <-
+  simdataoneres <-
     replicate(
       nsample,
       simAsyLongdata(
@@ -16,13 +16,14 @@ simdataone <- function(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,
       ),
       simplify = F
     )
-  simdatasam
+  simdataoneres
 }
 
 
 simmain <- function(nrep,nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,cenor,horder) {
-  simdatarep <- replicate(nrep,simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,cenor))
-  simres <- foreach(simdata = simdatarep,.combine="rbind") %do% {
+  simdatarep <- parLapply(cl,1:nrep,function(x) simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,cenor))
+  #simdatarep <- lapply(1:nrep,function(x) simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,cenor))
+  simres <- foreach(simdata = simdatarep,.combine="rbind") %dopar% {
     simoneres <- estasy(simdata, NULL, nsample ^ (-horder), nsample, p)
     unlist(simoneres[c(1,4)])
   }

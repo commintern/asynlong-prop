@@ -10,4 +10,5 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 0.12.16), RcppArmadillo, extraDistr, MASS, nleqslv
+Depends: extraDistr, MASS, nleqslv
 LinkingTo: Rcpp, RcppArmadillo
