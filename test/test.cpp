@@ -1,18 +1,10 @@
 #include <RcppArmadillo.h>
-#include <RcppEigen.h>
 
-//[[Rcpp::depends(RcppEigen)]]
 //[[Rcpp::depends(RcppArmadillo)]]
 #include <iostream>
 using namespace arma;
 using namespace Rcpp;
 using namespace std;
-
-using Eigen::Map;                       // 'maps' rather than copies
-using Eigen::MatrixXd;                  // variable size matrix, double precision
-using Eigen::VectorXd;                  // variable size vector, double precision
-using Eigen::SelfAdjointEigenSolver;    // one of the eigenvalue solvers
-
 
 // Test functions
 // [[Rcpp::export]]
@@ -34,7 +26,7 @@ arma::uvec foo(arma::vec z) {
 //   }
 //   return res;
 // }
-// 
+//
 // // [[Rcpp::export]]
 // arma::mat outerprotest2(arma::vec x, arma::vec y) {
 //   int nx =x.size();
@@ -43,14 +35,14 @@ arma::uvec foo(arma::vec z) {
 //   res = x*y.t();
 //   return res;
 // }
-// 
-// 
-// 
+//
+//
+//
 // // [[Rcpp::export]]
 // MatrixXd outerprotest3(Map<VectorXd> X,Map<VectorXd> Y) {
 //   return X * Y.adjoint();
 // }
-// 
+//
 // // [[Rcpp::export]]
 // arma::mat mattest(Rcpp::ListOf<NumericMatrix>& kerMat) {
 //   //NumericMatrix temp(kerMat[1]);
@@ -61,23 +53,23 @@ arma::uvec foo(arma::vec z) {
 //   }
 //   return temp_kermat;
 // }
-// 
+//
 // // [[Rcpp::export]]
 // arma::mat mattest1(const Rcpp::ListOf<NumericMatrix>& kerMat) {
 //   mat temp_kermat;
 //   for(int i=0;i<10;i++){
 //     temp_kermat = Rcpp::as<arma::mat>(kerMat[i]);
 //   }
-//   
+//
 //   return temp_kermat;
 // }
-// 
+//
 // // [[Rcpp::export]]
 // arma::uvec compa(const arma::vec& x, const double& va){
 //   return x >= va;
 // }
-// 
-// 
+//
+//
 // // [[Rcpp::export]]
 // NumericVector tran1(NumericVector x){
 //   int n = x.size();
@@ -87,7 +79,7 @@ arma::uvec foo(arma::vec z) {
 //   }
 //   return x;
 // }
-// 
+//
 // // [[Rcpp::export]]
 // arma::vec tran2(arma::vec x){
 //   x.transform([](double val){ return pow(val,2); });
@@ -97,7 +89,7 @@ arma::uvec foo(arma::vec z) {
 
 // // [[Rcpp::export]]
 // arma::field<arma::mat> fieldgen(Rcpp::ListOf<NumericVector>& A,
-//                         Rcpp::ListOf<NumericVector>& B) { 
+//                         Rcpp::ListOf<NumericVector>& B) {
 //   std::size_t An = A.size();
 //   std::size_t Bn = B.size();
 //   unsigned int i,j;
@@ -111,9 +103,9 @@ arma::uvec foo(arma::vec z) {
 // }
 
 // // [[Rcpp::export]]
-// arma::field<arma::vec> fieldout(arma::field<arma::vec>& A) { 
+// arma::field<arma::vec> fieldout(arma::field<arma::vec>& A) {
 //   std::size_t An = A.size();
-//   
+//
 //   unsigned int i;
 //   arma::field<arma::vec> F(An);
 //   for(i=0;i<An;i++){
@@ -123,7 +115,7 @@ arma::uvec foo(arma::vec z) {
 // }
 
 // // [[Rcpp::export]]
-// arma::field<arma::field<arma::vec>> fielde(arma::field<arma::field<arma::vec>>& A) { 
+// arma::field<arma::field<arma::vec>> fielde(arma::field<arma::field<arma::vec>>& A) {
 //   cout << A(0,0) << endl;
 //   return A;
 // }
@@ -168,7 +160,7 @@ arma::uvec foo(arma::vec z) {
 //         ++i;
 //       }
 //     }
-//     
+//
 //   }
 //   return res;
 // }
@@ -188,7 +180,7 @@ arma::uvec foo(arma::vec z) {
 //       res(i,j)=temp;
 //     }
 //   }
-//   
+//
 //   for(i=0;i<nrow;i++){
 //     for(j=0;j<ncol;j++){
 //       temp=res(i,j);
@@ -196,7 +188,7 @@ arma::uvec foo(arma::vec z) {
 //   }
 //   return res;
 // }
-// 
+//
 // // [[Rcpp::export]]
 // arma::cube cuberd(arma::vec vv, int nrow, int ncol){
 //   int i,j;
@@ -209,7 +201,7 @@ arma::uvec foo(arma::vec z) {
 //       res.subcube( i, j, p, i, j, p )=1;
 //     }
 //   }
-//   
+//
 //   for(i=0;i<nrow;i++){
 //     for(j=0;j<ncol;j++){
 //       temp=res.tube(i,j);
@@ -228,7 +220,7 @@ arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, int p)
     res.subcube(i,0,0,i,ncol-1,p-1) = covMat;
   }
   res.slice(p).each_col() = countprocess;
-  
+
   return res;
 }
 
@@ -241,11 +233,11 @@ arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, int p)
 #mattest(tm)
 #mattest1(tm)
 
-#tr <- microbenchmark::microbenchmark(mattest(tm),mattest1(tm),times=1000L)  
+#tr <- microbenchmark::microbenchmark(mattest(tm),mattest1(tm),times=1000L)
 #plot(tr)
 #tt <- runif(10)
 #compa(tt,tt[1])
-#microbenchmark::microbenchmark(tran1(1:200),tran2(1:200),times=100L)  
+#microbenchmark::microbenchmark(tran1(1:200),tran2(1:200),times=100L)
 #t1 <- replicate(2,runif(2),simplify = F)
 #t2 <- replicate(2,runif(2),simplify = F)
 #test <- fieldgen(t1,t2)

@@ -13,10 +13,6 @@ longest_c <- function(gamma, kerMat, meas_times, covariates, response, dlambda, 
     .Call(`_asynlong_longest_c`, gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p)
 }
 
-longest_test_c <- function(gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p) {
-    .Call(`_asynlong_longest_test_c`, gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p)
-}
-
 ugamma1_C <- function(kerMat, covariates, n, p) {
     .Call(`_asynlong_ugamma1_C`, kerMat, covariates, n, p)
 }
@@ -31,14 +27,6 @@ ugamma2_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
 
 dlambda_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
     .Call(`_asynlong_dlambda_C`, gamma, kerMat, meas_times, covariates, censor, n, p)
-}
-
-foo <- function(z) {
-    .Call(`_asynlong_foo`, z)
-}
-
-Xgen_C <- function(covMat, countprocess, p) {
-    .Call(`_asynlong_Xgen_C`, covMat, countprocess, p)
 }
 
 outermin_C <- function(x, y) {

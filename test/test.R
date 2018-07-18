@@ -83,7 +83,7 @@ testlong <- longest_c(gamma = testres[[1]],
           covariates = covar_list,
           response = response_list,
           dlambda = dlambda_list,
-          censor = censor_list, nsample, 1) 
+          censor = censor_list, nsample, 1)
 
 testlong[[1]]
 
@@ -93,7 +93,7 @@ testlong <- longest_test_c(gamma = testres[[1]],
                       covariates = covar_list,
                       response = response_list,
                       dlambda = dlambda_list,
-                      censor = censor_list, nsample, 1) 
+                      censor = censor_list, nsample, 1)
 
 testlong[[1]]
 
@@ -138,7 +138,7 @@ testlong <- longest_c(gamma = testres[[1]],
                       covariates = covar_list,
                       response = response_list,
                       dlambda = dlambda_list,
-                      censor = censor_list, nsample, p) 
+                      censor = censor_list, nsample, p)
 
 testlong[[1]]
 
@@ -173,7 +173,7 @@ library(doParallel)
 
 stopCluster(cl)
 
-cl <- cl <- makeCluster(6, type = "PSOCK") 
+cl <- makeCluster(4, type = "PSOCK")
 registerDoParallel(cl)
 clusterExport(cl,"simone")
 clusterEvalQ(cl,{
@@ -182,7 +182,7 @@ clusterEvalQ(cl,{
   Rcpp::sourceCpp('Cpp/util.cpp')
   Rcpp::sourceCpp('Cpp/recest.cpp')
   Rcpp::sourceCpp('Cpp/longest.cpp')
-  
+
   library("nleqslv")
   library("MASS")
   library("reda")

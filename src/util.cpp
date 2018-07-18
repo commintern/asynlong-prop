@@ -1,7 +1,7 @@
 #include <RcppArmadillo.h>
 //[[Rcpp::depends(RcppArmadillo)]]
 #include <iostream>
-#include "util.hpp"
+//#include "util.hpp"
 
 
 using namespace arma;
@@ -28,7 +28,7 @@ double epanker_C(double u,double h){
   double temp = u/h;
   double res = std::fabs(temp)<1 ? 0.75*(1.0-temp*temp)/h : 0;
   return res;
-} 
+}
 
 // K(T_{ij}-R_{lu})
 // [[Rcpp::export]]

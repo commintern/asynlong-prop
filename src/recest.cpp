@@ -6,7 +6,7 @@ using namespace Rcpp;
 using namespace std;
 
 /* ===========================================
- * Estimation for observation process 
+ * Estimation for observation process
  * ===========================================
  */
 
@@ -33,7 +33,7 @@ arma::vec ugamma1_C(Rcpp::ListOf<NumericMatrix>& kerMat,
 
 // Note that the definition of S^{(k)} is different from the paper here. For
 // simiplicity, the divisor n is omitted
-// Obtain Zbar=S^(1)/S^(1) for each T_{ij}. 
+// Obtain Zbar=S^(1)/S^(1) for each T_{ij}.
 // [[Rcpp::export]]
 Rcpp::List zbar_c(const arma::rowvec& gamma,
                   Rcpp::ListOf<NumericMatrix>& kerMat,
@@ -42,7 +42,7 @@ Rcpp::List zbar_c(const arma::rowvec& gamma,
                   const arma::vec& censor, const unsigned int& n,
                   const unsigned int& p) {
   unsigned int i, l;
-  arma::dmat temp_kermat; 
+  arma::dmat temp_kermat;
   arma::mat temp, temp0, s0sumres, s1sumres;
   arma::mat tempres;
   arma::dmat temp_cov;
@@ -61,7 +61,7 @@ Rcpp::List zbar_c(const arma::rowvec& gamma,
       expgammaZ = exp(gamma * temp_cov);
       censorind = conv_to<arma::vec>::from(censor[l] > temp_meas_time);
       temp = (temp_kermat * (temp_cov.each_row() % expgammaZ).t());
-      temp = temp.each_col() % censorind; 
+      temp = temp.each_col() % censorind;
       temp0 = temp_kermat * expgammaZ.t();
       temp0 = temp0.each_col() % censorind;
       //weightsum = sum(temp_kermat, 1);
@@ -70,7 +70,7 @@ Rcpp::List zbar_c(const arma::rowvec& gamma,
     }
 
     tempres = s1sumres.each_col() / s0sumres;
-    tempres.transform( [](double val) { return (std::isnan(val) ? 0 : val); } );
+    tempres.replace(datum::nan, 0);
     res(i) = tempres.t();
   }
   return res;
@@ -94,7 +94,7 @@ arma::vec ugamma2_C(const arma::rowvec& gamma,
     temp_zbari = Rcpp::as<arma::mat>(zbarres[i]);
     //mat(zbarres[i].begin(),zbarres[i].nrow(),zbarres[i].ncol(),false);
     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
-    
+
     res = res + arma::conv_to<arma::vec>::from(sum(temp_zbari * temp_kermat, 1));
   }
   return res;
@@ -135,7 +135,7 @@ Rcpp::List dlambda_C(const arma::rowvec& gamma,
     // s1(i) = s1sumres;
     // s0(i) = s0sumres;
     tempres = sum(mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false),1)/s0sumres;
-    tempres.transform( [](double val) { return (std::isnan(val) ? 0 : val); } );
+    tempres.replace(datum::nan, 0);
     res(i) =  tempres;
   }
   return res;
@@ -144,12 +144,4 @@ Rcpp::List dlambda_C(const arma::rowvec& gamma,
 
 
 
-/*** R
-### Test
-#ugamma_C(simdatasam,0.5,log)
-#foo(kerMat)
-#ugamma1_C(kerMat,covarlist,2L,1)
-#zbar(1,kerMat,timelist,covarlist,censorlist,2,2)
-#zbar(1,kerMat,timelist,covarlist,censorlist,2,2)
 
-*/
