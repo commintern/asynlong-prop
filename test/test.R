@@ -62,7 +62,7 @@ simdatasam <-
     ),
     simplify = F
   )
-testres <- estasy(simdatasam, kernelh, nsample ^ (-0.9), nsample, 1)
+testres <- estasy(simdatasam, kernelh, nsample ^ (-0.7), nsample, 1)
 testres[[1]]
 plot(testres[[3]], typ = "l")
 abline(0, 2*infl, col = "red")
@@ -105,7 +105,7 @@ testlong[[1]]
 
 
 
-nsample <-  30
+nsample <-  500
 infl <- 2
 p <- 2
 simdatasam <-
@@ -118,12 +118,12 @@ simdatasam <-
       mu0 = function(x) exp(sin(2 * pi * x)),
       beta = c(2,4),
       alpha = 0,
-      gamma = c(1,1)/2,
+      gamma = c(1,2)/2,
       cen = 1
     ),
     simplify = F
   )
-testres <- estasy_test(simdatasam, kernelh, nsample ^ (-0.8), nsample, p)
+testres <- estasy_test(simdatasam, kernelh, nsample ^ (-0.6), nsample, p)
 testres[[1]]
 plot(testres[[3]], typ = "l")
 abline(0, 2*infl, col = "red")
@@ -136,7 +136,7 @@ obscov_times_list <- lapply(simdatasam, function(x) x[["obscov_times"]])
 censor_list <- sapply(simdatasam, function(x) x[["censoring"]])
 dlambda_list <-  testres[[2]][,2]
 response_list <- sapply(simdatasam, function(x) x[["Y"]])
-kerMat <- kerMatgen_C(meas_obs_list,obscov_times_list,nsample ^ (-0.8))
+kerMat <- kerMatgen_C(meas_obs_list,obscov_times_list,nsample ^ (-0.6))
 
 testlong <- longest_c(gamma = testres[[1]],
                       kerMat=kerMat,
