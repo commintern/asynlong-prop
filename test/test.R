@@ -43,7 +43,7 @@ library("reda")
 library("extraDistr")
 
 set.seed(8102)
-nsample <- 300
+nsample <- 100
 
 
 infl <- 2
@@ -83,7 +83,7 @@ dlambda_list <-  testres[[2]][,2]
 response_list <- sapply(simdatasam, function(x) x[["Y"]])
 kerMat <- kerMatgen_C(meas_obs_list,obscov_times_list,nsample ^ (-0.8))
 
-testlong <- longest_c(gamma = testres[[1]],
+testlong <- longest_c(gamma = 1,
           kerMat=kerMat,
           meas_times = meas_obs_list,
           covariates = covar_list,
@@ -93,7 +93,7 @@ testlong <- longest_c(gamma = testres[[1]],
 
 testlong[[1]]
 
-testlong <- longest_test_c(gamma = testres[[1]],
+testlong <- longest_test_c(gamma = 1,
                       kerMat=kerMat,
                       meas_times = meas_obs_list,
                       covariates = covar_list,
@@ -238,3 +238,29 @@ simres <- foreach(i=1:100) %do% {
 simres <- t(sapply(simres, function(x) c(x[[1]],x[[2]])))
 
 colMeans(simres)
+
+microbenchmark::microbenchmark(
+  longest_c(
+    gamma = 1,
+    kerMat = kerMat,
+    meas_times = meas_obs_list,
+    covariates = covar_list,
+    response = response_list,
+    dlambda = dlambda_list,
+    censor = censor_list,
+    nsample,
+    1
+  ),
+  longest_test_c(
+    gamma = 1,
+    kerMat =
+      kerMat,
+    meas_times = meas_obs_list,
+    covariates = covar_list,
+    response = response_list,
+    dlambda = dlambda_list,
+    censor = censor_list,
+    nsample,
+    1
+  )
+)

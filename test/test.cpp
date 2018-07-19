@@ -210,18 +210,58 @@ arma::uvec foo(arma::vec z) {
 //   return res;
 // }
 
-// [[Rcpp::export]]
-arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, int p){
-  arma::uword i;
-  arma::uword nrow = countprocess.size();
-  arma::uword ncol = covMat.n_cols;
-  arma::cube res(nrow,ncol,p+1);
-  for(i=0;i<nrow;i++){
-    res.subcube(i,0,0,i,ncol-1,p-1) = covMat;
-  }
-  res.slice(p).each_col() = countprocess;
+// // [[Rcpp::export]]
+// arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, int p){
+//   arma::uword i;
+//   arma::uword nrow = countprocess.size();
+//   arma::uword ncol = covMat.n_cols;
+//   arma::cube res(nrow,ncol,p+1);
+//   for(i=0;i<nrow;i++){
+//     res.subcube(i,0,0,i,ncol-1,p-1) = covMat;
+//   }
+//   res.slice(p).each_col() = countprocess;
+//
+//   return res;
+// }
 
-  return res;
+
+// // [[Rcpp::export]]
+// arma::vec sumcol(arma::mat A){
+//   return sum(A,1);
+// }
+//
+// // [[Rcpp::export]]
+// arma::vec sumrow(arma::mat A){
+//   return sum(A,1);
+// }
+
+// [[Rcpp::export]]
+arma::vec con1(arma::vec A, double d, unsigned int p){
+  arma::vec v= A;
+  arma::vec::fixed<1> temp;
+  temp.fill(d);
+  v.insert_rows(p,temp);
+  return v;
+}
+
+// [[Rcpp::export]]
+arma::vec con2(arma::vec A, double d, unsigned int p){
+  arma::vec v= A;
+  arma::vec::fixed<1> temp;
+  temp.fill(d);
+  v = join_cols(v,temp);
+  return v;
+}
+
+
+// [[Rcpp::export]]
+arma::vec con3(arma::vec A, double d, unsigned int p){
+  arma::vec v= vec(p+1);
+
+  v.head(p) = vec(A.begin(),A.size(),false);
+  v(p) = d;
+  //v = join_cols(v,conv_to< arma::vec >::from(d));
+  return v;
 }
 
 /*** R

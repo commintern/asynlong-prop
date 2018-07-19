@@ -16,7 +16,7 @@ clusterEvalQ(cl,{
 
 
 simres <- simmain(
-  nrep = 100,
+  nrep = 500,
   nsample = 100,
   p = 1,
   infl = 2,
@@ -28,13 +28,16 @@ simres <- simmain(
   alpha = 1,
   gamma = 1,
   cenor = 1,
-  horder = 0.3
+  horder = 0.6
 )
 
 colMeans(simres)
 var(simres)
+sqrt(diag(var(simres)))
+sqrt(colMeans(t((t(simres)-c(1,2,1))^2)))
 
-colMeans(t((t(simres)-c(1,2,1))^2))
+
+
 
 simres <- simmain(
   nrep = 100,

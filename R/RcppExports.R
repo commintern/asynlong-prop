@@ -13,6 +13,10 @@ longest_c <- function(gamma, kerMat, meas_times, covariates, response, dlambda, 
     .Call(`_asynlong_longest_c`, gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p)
 }
 
+longest_test_c <- function(gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p) {
+    .Call(`_asynlong_longest_test_c`, gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p)
+}
+
 ugamma1_C <- function(kerMat, covariates, n, p) {
     .Call(`_asynlong_ugamma1_C`, kerMat, covariates, n, p)
 }

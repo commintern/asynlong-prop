@@ -302,198 +302,111 @@ Rcpp::List longest_c(const arma::rowvec& gamma,
 
 
 
-// Rcpp::List longest_test_c(const arma::rowvec& gamma,
-//                      Rcpp::ListOf<NumericMatrix>& kerMat,
-//                      Rcpp::ListOf<NumericVector>& meas_times,
-//                      Rcpp::ListOf<NumericMatrix>& covariates,
-//                      Rcpp::ListOf<NumericVector>& response,
-//                      Rcpp::ListOf<NumericVector>& dlambda,
-//                      const arma::vec& censor, const unsigned int& n,
-//                      const unsigned int& p) {
-//   unsigned int i, l=0;
-//   arma::mat temp_kermat,temp_test;
-//   arma::mat temp1, temp0, s0sumres, s1sumres;
-//   arma::cube temp_cube;
-//   arma::mat tempres;
-//   double temp_dvalue;
-//   arma::dmat temp_cov_i;
-//   arma::rowvec expgammaZ;
-//   arma::field<arma::rowvec> expgamZ_list(n);
-//   arma::field<arma::mat> Xbar_list(n);
-//   arma::field<arma::mat> KerexpgamZ_list(n*n);
-//   arma::field<arma::cube> Xmat_list(n*n),KerXexpgamZ_list(n*n), XXtbar_list(n);
-//   arma::vec temp_meas_time_i,temp_meas_time_l,temp_countprocess_l,temp_vec1,temp_vec2;
-//   arma::vec censorind;
-//
-//   unsigned int j,k,Jn,Kn;
-//   //Rcpp::Rcout <<  "start" <<endl;
-//   //List res(2);
-//   // i is the iterator for R_i
-//   for (i = 0; i < n; i++) {
-//     temp_meas_time_i = vec(meas_times[i].begin(),meas_times[i].size(),false);
-//     temp_cov_i = mat(covariates[i].begin(),covariates[i].nrow(),covariates[i].ncol(),false);
-//     // Obtain exp(gamma * Z_i(R_{ik}))
-//     // Store them in expgamZ_list
-//
-//     expgamZ_list(i) = conv_to<arma::rowvec>::from(exp(gamma * temp_cov_i));
-//   }
-//
-//   //Rcpp::Rcout << expgamZ_list <<endl;
-//   //Rcpp::Rcout << KerexpgamZ_list <<endl;
-//   //Rcpp::Rcout <<  "2step" <<endl;
-//
-//   // Calculate \bar{X}
-//   arma::vec tempres_vec;
-//   arma::mat temp_cov;
-//   arma::vec temp = arma::vec(p+1);
-//   for(i=0;i<n;i++){
-//     //temp1 = arma::zeros<arma::mat>(KerexpgamZ_list(i*n+0).n_rows, p+1);
-//
-//     temp_meas_time_i = vec(meas_times[i].begin(),meas_times[i].size(),false);
-//     temp_kermat = mat(kerMat[i * n + 0].begin(),kerMat[i * n + 0].nrow(),kerMat[i * n + 0].ncol(),false);
-//     Jn = temp_kermat.n_rows;
-//     Xbar_list(i) = arma::mat(p+1,Jn);
-//     for(j=0;j<Jn;j++){
-//       temp_dvalue = 0;
-//       tempres_vec = arma::zeros<arma::vec>(p+1);
-//       for(l=0;l<n;l++){
-//         temp_meas_time_l = vec(meas_times[l].begin(),meas_times[l].size(),false);
-//         temp_cov = mat(covariates[l].begin(),covariates[l].nrow(),covariates[l].ncol(),false);
-//         temp_countprocess_l = countprofun_C(temp_meas_time_l, temp_meas_time_i);
-//         temp_kermat = mat(kerMat[i * n + l].begin(),kerMat[i * n + l].nrow(),kerMat[i * n + l].ncol(),false);
-//         Kn = temp_kermat.n_cols;
-//         for(k=0;k<Kn;k++){
-//           temp.head_rows(p) = temp_cov.col(k);
-//           temp(p) = temp_countprocess_l(j);
-//           temp_dvalue = temp_dvalue + temp_kermat(j,k) * (censor[l] > temp_meas_time_i(j)) * expgamZ_list(l).at(k);
-//           tempres_vec = tempres_vec + temp_kermat(j,k) * temp * (censor[l] > temp_meas_time_i(j)) * expgamZ_list(l).at(k);
-//           //Rcpp::Rcout <<i << j << l << k << endl;
-//         }
-//       }
-//       Xbar_list(i).col(j) = tempres_vec/temp_dvalue ;
-//     }
-//     Xbar_list(i).transform( [](double val) { return (std::isnan(val) ? 0 : val); } );
-//   }
-//
-//   // TODO futher explain
-//   // Calculate \bar{XXt}
-//   //Rcpp::Rcout <<  "2.5step" <<endl;
-//   arma::mat tempres_mat;
-//   for(i=0;i<n;i++){
-//     //temp1 = arma::zeros<arma::mat>(KerexpgamZ_list(i*n+0).n_rows, p+1);
-//
-//     temp_meas_time_i = vec(meas_times[i].begin(),meas_times[i].size(),false);
-//     temp_kermat = mat(kerMat[i * n + 0].begin(),kerMat[i * n + 0].nrow(),kerMat[i * n + 0].ncol(),false);
-//     Jn = temp_kermat.n_rows;
-//     XXtbar_list(i) = arma::cube(p+1,p+1,Jn);
-//     for(j=0;j<Jn;j++){
-//       temp_dvalue = 0;
-//       tempres_mat = arma::zeros<arma::mat>(p+1,p+1);
-//       for(l=0;l<n;l++){
-//         temp_meas_time_l = vec(meas_times[l].begin(),meas_times[l].size(),false);
-//         temp_cov = mat(covariates[l].begin(),covariates[l].nrow(),covariates[l].ncol(),false);
-//         temp_countprocess_l = countprofun_C(temp_meas_time_l, temp_meas_time_i);
-//         temp_kermat = mat(kerMat[i * n + l].begin(),kerMat[i * n + l].nrow(),kerMat[i * n + l].ncol(),false);
-//         Kn = temp_kermat.n_cols;
-//         for(k=0;k<Kn;k++){
-//           temp.head_rows(p) = temp_cov.col(k);
-//           temp(p) = temp_countprocess_l(j);
-//           temp_dvalue = temp_dvalue + temp_kermat(j,k) * (censor[l] > temp_meas_time_i(j)) * expgamZ_list(l).at(k);
-//           tempres_mat = tempres_mat + temp_kermat(j,k) * temp * temp .t() * (censor[l] > temp_meas_time_i(j)) * expgamZ_list(l).at(k);
-//
-//         }
-//       }
-//       XXtbar_list(i).slice(j) = tempres_mat / temp_dvalue;
-//     }
-//     XXtbar_list(i).transform( [](double val) { return (std::isnan(val) ? 0 : val); } );
-//     //Rcpp::Rcout << XXtbar_list(i) << endl;
-//   }
-//
-//
-//   // Calculate theta
-//   //Rcpp::Rcout <<  "3step" <<endl;
-//
-//
-//   temp1 = arma::zeros<arma::vec>(p+1);// numerator
-//   temp0 = arma::zeros<arma::mat>(p+1,p+1); // denominator
-//   arma::vec temp_dlambda,temp_response;
-//   // for(i=0;i<n;i++){
-//   //
-//   //   temp_dlambda = vec(dlambda[i].begin(),dlambda[i].size(),false);
-//   //   for(l=0;l<n;l++){
-//   //
-//   //     Jn = KerexpgamZ_list(i*n + l).n_rows;
-//   //     Kn = KerexpgamZ_list(i*n + l).n_cols;
-//   //
-//   //     for(j=0;j<Jn;j++){
-//   //       for(k=0;k<Kn;k++){
-//   //         temp_vec1 = KerXexpgamZ_list(i*n+l).tube(j,k);
-//   //         temp_vec2 = Xmat_list(i*n+l).tube(j,k);
-//   //         temp_vec2 = temp_vec2-Xbar_list(i).row(j).t();
-//   //         temp0 = temp0+temp_dlambda(j)*temp_vec1*temp_vec2.t();
-//   //       }
-//   //     }
-//   //   }
-//   // }
-//   //
-//   // temp_test = temp0;
-//   //
-//   // Rcpp::Rcout << temp0 << endl;
-//   //Rcpp::Rcout << "Step 4" << endl;
-//   //temp0 = arma::zeros<arma::mat>(p+1,p+1); // denominator
-//   for(i=0;i<n;i++){
-//     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n +i].nrow(),kerMat[i * n + i].ncol(),false);
-//     Jn = temp_kermat.n_rows;
-//     Kn = temp_kermat.n_cols;
-//     //Rcpp::Rcout <<Jn <<" " << Kn << endl;
-//     for(j=0;j<Jn;j++){
-//       for(k=0;k<Kn;k++){
-//         //temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
-//         tempres_vec = Xbar_list(i).col(j);
-//         temp0 = temp0 + temp_kermat(j,k)*(XXtbar_list(i).slice(j) - tempres_vec * tempres_vec.t());
-//         //Rcpp::Rcout << (XXtbar_list(i).slice(j) - tempres_vec * tempres_vec.t()) << endl;
-//       }
-//     }
-//
-//   }
-//
-//   //Rcpp::Rcout << temp0 << endl;
-//   //Rcpp::Rcout <<  "4step" <<endl;
-//   for(i=0;i<n;i++){
-//     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n +i].nrow(),kerMat[i * n + i].ncol(),false);
-//     Jn = temp_kermat.n_rows;
-//     Kn = temp_kermat.n_cols;
-//     temp_cov = mat(covariates[i].begin(),covariates[i].nrow(),covariates[i].ncol(),false);
-//     temp_response = vec(response[i].begin(),response[i].size(),false);
-//     //temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
-//     temp_meas_time_i = vec(meas_times[i].begin(),meas_times[i].size(),false);
-//
-//     for(j=0;j<Jn;j++){
-//       for(k=0;k<Kn;k++){
-//         temp.head_rows(p) = temp_cov.col(k);
-//         temp(p) = j;
-//         temp1 = temp1+temp_response(j)*(temp-Xbar_list(i).col(j)) * temp_kermat.at(j,k) ;
-//       }
-//     }
-//
-//   }
-//   arma::vec  thetaest= inv_sympd(temp0) * temp1;
-//   //Rcpp::Rcout << inv_sympd(temp_test) * temp1 << endl;
-//   // return Rcpp::List::create(Rcpp::Named("thetaest") = thetaest,
-//   //                           Rcpp::Named("expgamZ_list") =  expgamZ_list,
-//   //                           Rcpp::Named("KerexpgamZ_list") = KerexpgamZ_list,
-//   //                           Rcpp::Named("Xmat_list") = Xmat_list,
-//   //                           Rcpp::Named("KerXexpgamZ_list") = KerXexpgamZ_list,
-//   //                           Rcpp::Named("Xbar_list") = Xbar_list,
-//   //                           Rcpp::Named("temp0") = temp0,
-//   //                           Rcpp::Named("temp1") = temp1
-//   //                         );
-//   return Rcpp::List::create(Rcpp::Named("thetaest") = thetaest,
-//                             Rcpp::Named("temp0") = temp0,
-//                             Rcpp::Named("temp1") = temp1);
-// }
+// [[Rcpp::export]]
+Rcpp::List longest_test_c(const arma::rowvec& gamma,
+                     Rcpp::ListOf<NumericMatrix>& kerMat,
+                     Rcpp::ListOf<NumericVector>& meas_times,
+                     Rcpp::ListOf<NumericMatrix>& covariates,
+                     Rcpp::ListOf<NumericVector>& response,
+                     Rcpp::ListOf<NumericVector>& dlambda,
+                     const arma::vec& censor, const unsigned int& n,
+                     const unsigned int& p) {
+  unsigned int i, l=0;
+  arma::mat temp_kermat;
 
 
+  arma::rowvec expgammaZ;
+  arma::field<arma::rowvec> expgamZ_list(n);
+  arma::field<arma::mat> Xbar_list(n);
+  arma::field<arma::mat> KerexpgamZ_list(n*n);
+  arma::field<arma::cube> Xmat_list(n*n),KerXexpgamZ_list(n*n), XXtbar_list(n);
+  arma::vec temp_meas_time_i,temp_meas_time_l,temp_countprocess_l;
+  arma::vec censorind,temp_response;
+
+  unsigned int j,k,Jn,Kn;
+  //Rcpp::Rcout <<  "start" <<endl;
+  // Calculate Xbar and XXtbar
+  //arma::cube Xmat_temp;
+  arma::mat temp_cov,temp_KerexpgamZ;
+  arma::rowvec tempexpgamZ;
+  //arma::mat  XXtbar_num_temp=mat(p+1,p+1,arma::fill::zeros);
+  arma::mat  temp_kermat_ii;
+  //arma::vec  Xbar_num_temp=vec(p+1,arma::fill::zeros);
+  arma::vec den_temp ;
+  //Rcpp::Rcout <<  "00" <<endl;
+  arma::vec temp_X = vec(p+1,arma::fill::zeros);
+  arma::vec thetanum_part1 = vec(p+1,arma::fill::zeros);
+  arma::vec temp_thetanum_part1 = vec(p+1,arma::fill::zeros);
+  arma::vec thetanum_part2=vec(p+1,arma::fill::zeros);
+  arma::mat thetaden =mat(p+1,p+1,arma::fill::zeros);
+  arma::vec temp_kermat_rowsum;
+  //Rcpp::Rcout <<  "11" <<endl;
+  for (i = 0; i < n; i++) {
+    temp_meas_time_i = vec(meas_times[i].begin(),meas_times[i].size(),false);
+    temp_response = vec(response[i].begin(),response[i].size(),false);
+    Jn = temp_meas_time_i.size();
+    Xbar_list(i) = mat(Jn,p+1,arma::fill::zeros);
+    XXtbar_list(i) = cube(p+1,p+1,Jn,arma::fill::zeros);
+    //temp_thetanum_part1 = vec(p+1,arma::fill::zeros);
+    den_temp = vec(Jn,arma::fill::zeros);
+    //Rcpp::Rcout <<  "22" <<endl;
+    for (l=0; l < n; l++) {
+      temp_meas_time_l = vec(meas_times[l].begin(),meas_times[l].size(),false);
+      temp_cov = mat(covariates[l].begin(),covariates[l].nrow(),covariates[l].ncol(),false);
+      temp_kermat = mat(kerMat[i * n + l].begin(),kerMat[i * n + l].nrow(),kerMat[i * n + l].ncol(),false);
+      temp_KerexpgamZ = temp_kermat.each_row() % exp(gamma * temp_cov);
+      ///////////////////////////////////// TODO
+      censorind = conv_to<arma::vec>::from(censor[l] > temp_meas_time_i);
+      temp_KerexpgamZ.each_col() %= censorind;
+      temp_countprocess_l = countprofun_C(temp_meas_time_l, temp_meas_time_i);
+
+      den_temp += sum(temp_KerexpgamZ,1);
+
+      Kn = temp_cov.n_cols;
+      //Rcpp::Rcout <<  "33" <<endl;
+
+      for(j=0; j<Jn;j++){
+        temp_thetanum_part1.zeros();
+        for(k=0; k<Kn;k++){
+          temp_X.head(p) = temp_cov.col(k);
+          temp_X(p) = temp_countprocess_l(j);
+          Xbar_list(i).row(j) += temp_KerexpgamZ(j,k)*temp_X.t();
+          XXtbar_list(i).slice(j) += temp_KerexpgamZ(j,k)*temp_X * temp_X.t();
+          // Calculate the numerator of theta equation part1;
+          if(i==l){
+            temp_thetanum_part1 += temp_kermat(j,k)*temp_X;
+            //thetanum_part1+= temp_kermat(j,k)*temp_X*temp_response(j);
+          }
+        }
+        if(i==l){
+          thetanum_part1 += temp_thetanum_part1 *temp_response(j);
+        }
+      }
+    }
+
+    //Rcpp::Rcout <<  "44" <<endl;
+    Xbar_list(i).each_col() /= den_temp;
+    for(j=0;j<Jn;j++){
+      XXtbar_list(i).slice(j) /= den_temp(j);
+    }
+
+    //Rcpp::Rcout <<  "55" <<endl;
+    temp_kermat_ii = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
+    temp_kermat_rowsum =sum(temp_kermat_ii,1);
+    thetanum_part2 += sum(Xbar_list(i).each_col() % (temp_response % temp_kermat_rowsum),0).t();
+    for(j=0;j<Jn;j++){
+      thetaden += (XXtbar_list(i).slice(j) - Xbar_list(i).row(j).t() * Xbar_list(i).row(j))*temp_kermat_rowsum(j);
+    }
+    //thetaden += sum(Xbar_list(i).each_col() % response(i) % sum(temp_kermat_ii,1),0).t();
+  }
 
 
+  arma::vec thetanum = thetanum_part1-thetanum_part2;
+  arma::vec thetaest= inv_sympd(thetaden) * thetanum;
+  return Rcpp::List::create(Rcpp::Named("thetaest") = thetaest,
+                            Rcpp::Named("Xbar_list") = Xbar_list,
+                            Rcpp::Named("temp0") = thetaden,
+                            Rcpp::Named("temp1") = thetanum
 
+  );
+}
