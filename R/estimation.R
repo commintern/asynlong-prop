@@ -53,16 +53,16 @@ estasy <- function(dataset,kerFun,h,n,p){
   response_list <- sapply(dataset, function(x) x[["Y"]])
   #kerMat <- kerMatgen_C(meas_obs_list,obscov_times_list,nsample ^ (-0.8))
 
-  longest <- longest_c(gamma = gammaest_res$x,
+  longest_res <- longest_c(gamma = gammaest_res$x,
                         kerMat=kerMat,
                         meas_times = meas_obs_list,
                         covariates = covar_list,
                         response = response_list,
                         dlambda = NULL,
                         censor = censor_list, n, p)
-  gmu0est <- cbind(unlist(meas_obs_list),unlist(response_list)-do.call(rbind,longest$Xbar_list) %*% longest[[1]])
-  gmu0est <- gmu0est[order(gmu0est[,1]),]
-  return(list(gamma=gammaest_res$x,lambda0 = lambdaest_res, Lambda0=Lambdaest_res, thetaest=longest[[1]],gmu0est=gmu0est))
+  #gmu0est <- cbind(unlist(meas_obs_list),unlist(response_list)-do.call(rbind,longest$Xbar_list) %*% longest[[1]])
+  #gmu0est <- gmu0est[order(gmu0est[,1]),]
+  return(list(gamma=gammaest_res$x,lambda0 = lambdaest_res, Lambda0=Lambdaest_res, thetaest=longest_res[[1]],gmu0est=longest_res[[2]]))
 }
 
 ################################################################################################################

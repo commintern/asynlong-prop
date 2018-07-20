@@ -2,7 +2,7 @@ library(doParallel)
 
 stopCluster(cl)
 
-cl <- makeCluster(6, type = "PSOCK")
+cl <- makeCluster(6)
 registerDoParallel(cl)
 clusterEvalQ(cl,{
   library('asynlong')
@@ -16,7 +16,7 @@ clusterEvalQ(cl,{
 
 
 simres <- simmain(
-  nrep = 500,
+  nrep = 10,
   nsample = 100,
   p = 1,
   infl = 2,
@@ -67,13 +67,29 @@ simres <- simmain(
   infl = 2,
   obscov_rate = 6,
   lambda0_val = 2,
-  mu0 = function(x) sqrt(x),
+  mu0 = function(x)
+    sqrt(x),
   beta = 2,
   alpha = 1,
   gamma = 1,
-  cenor = 1,
+  censor = 1,
   horder = 0.4
 )
 colMeans(t((t(simres)-c(1,2,1))^2))
 
+simrun(
+  nrep = 10,
+  nsample = 100,
+  p = 1,
+  infl = 2,
+  obscov_rate = 6,
+  lambda0_val = 2,
+  mu0 = function(x)
+    exp(sin(2 * pi * x)),
+  beta0 = 2,
+  alpha0 = 1,
+  gamma0 = 1,
+  censor = 1,
+  horder = 0.6
+)
 

@@ -32,40 +32,21 @@ BEGIN_RCPP
 END_RCPP
 }
 // longest_c
-Rcpp::List longest_c(const arma::rowvec& gamma, Rcpp::ListOf<NumericMatrix>& kerMat, Rcpp::ListOf<NumericVector>& meas_times, Rcpp::ListOf<NumericMatrix>& covariates, Rcpp::ListOf<NumericVector>& response, Rcpp::ListOf<NumericVector>& dlambda, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
+Rcpp::List longest_c(const arma::rowvec& gamma, Rcpp::ListOf < NumericMatrix >& kerMat, Rcpp::ListOf < NumericVector >& meas_times, Rcpp::ListOf < NumericMatrix >& covariates, Rcpp::ListOf < NumericVector >& response, Rcpp::ListOf < NumericVector >& dlambda, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
 RcppExport SEXP _asynlong_longest_c(SEXP gammaSEXP, SEXP kerMatSEXP, SEXP meas_timesSEXP, SEXP covariatesSEXP, SEXP responseSEXP, SEXP dlambdaSEXP, SEXP censorSEXP, SEXP nSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const arma::rowvec& >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type kerMat(kerMatSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type meas_times(meas_timesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type covariates(covariatesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type response(responseSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type dlambda(dlambdaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf < NumericMatrix >& >::type kerMat(kerMatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf < NumericVector >& >::type meas_times(meas_timesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf < NumericMatrix >& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf < NumericVector >& >::type response(responseSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf < NumericVector >& >::type dlambda(dlambdaSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type censor(censorSEXP);
     Rcpp::traits::input_parameter< const unsigned int& >::type n(nSEXP);
     Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
     rcpp_result_gen = Rcpp::wrap(longest_c(gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p));
-    return rcpp_result_gen;
-END_RCPP
-}
-// longest_test_c
-Rcpp::List longest_test_c(const arma::rowvec& gamma, Rcpp::ListOf<NumericMatrix>& kerMat, Rcpp::ListOf<NumericVector>& meas_times, Rcpp::ListOf<NumericMatrix>& covariates, Rcpp::ListOf<NumericVector>& response, Rcpp::ListOf<NumericVector>& dlambda, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
-RcppExport SEXP _asynlong_longest_test_c(SEXP gammaSEXP, SEXP kerMatSEXP, SEXP meas_timesSEXP, SEXP covariatesSEXP, SEXP responseSEXP, SEXP dlambdaSEXP, SEXP censorSEXP, SEXP nSEXP, SEXP pSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::rowvec& >::type gamma(gammaSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type kerMat(kerMatSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type meas_times(meas_timesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type covariates(covariatesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type response(responseSEXP);
-    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type dlambda(dlambdaSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type censor(censorSEXP);
-    Rcpp::traits::input_parameter< const unsigned int& >::type n(nSEXP);
-    Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
-    rcpp_result_gen = Rcpp::wrap(longest_test_c(gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -189,7 +170,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_asynlong_countprofun_C", (DL_FUNC) &_asynlong_countprofun_C, 2},
     {"_asynlong_Xgen_C", (DL_FUNC) &_asynlong_Xgen_C, 3},
     {"_asynlong_longest_c", (DL_FUNC) &_asynlong_longest_c, 9},
-    {"_asynlong_longest_test_c", (DL_FUNC) &_asynlong_longest_test_c, 9},
     {"_asynlong_ugamma1_C", (DL_FUNC) &_asynlong_ugamma1_C, 4},
     {"_asynlong_zbar_c", (DL_FUNC) &_asynlong_zbar_c, 7},
     {"_asynlong_ugamma2_C", (DL_FUNC) &_asynlong_ugamma2_C, 7},
