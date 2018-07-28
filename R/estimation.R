@@ -13,7 +13,7 @@ gammaest <-  function(kerMat,meas_obs_list,covar_list,censor_list,n,p){
       ugamma2_C(gamma,kerMat,meas_obs_list,covar_list,censor_list,n,p)
   }
   #browser()
-  gammaestres <- nleqslv(rep(2,p),ugamma)
+  gammaestres <- nleqslv(rep(0,p),ugamma)
 }
 
 # Estimation of Lambda

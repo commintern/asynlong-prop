@@ -20,22 +20,20 @@ arma::vec ugamma1_C(Rcpp::ListOf<NumericMatrix>& kerMat,
   unsigned int i = 0;
   arma::mat temp_kermat;
   arma::mat temp_cov,temp;
-  arma::mat res = arma::zeros<arma::vec>(p);
+  arma::mat res = arma::zeros<arma::mat>(p,1);
   for (i = 0; i < n; i++) {
     temp_cov = mat(covariates[i].begin(),covariates[i].nrow(),covariates[i].ncol(),false);
     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
-    temp = temp_kermat * temp_cov.t();
-    res = res + arma::conv_to<arma::vec>::from(
-      sum(temp, 0));
+    res = res + sum(temp_kermat * temp_cov.t(), 0);
   }
-  return res;
+  return conv_to<arma::vec>::from(res);
 }
 
 // Note that the definition of S^{(k)} is different from the paper here. For
 // simiplicity, the divisor n is omitted
 // Obtain Zbar=S^(1)/S^(1) for each T_{ij}.
 // [[Rcpp::export]]
-Rcpp::List zbar_c(const arma::rowvec& gamma,
+arma::field<arma::mat> zbar_c(const arma::rowvec& gamma,
                   Rcpp::ListOf<NumericMatrix>& kerMat,
                   Rcpp::ListOf<NumericVector>& meas_times,
                   Rcpp::ListOf<NumericMatrix>& covariates,
@@ -50,7 +48,7 @@ Rcpp::List zbar_c(const arma::rowvec& gamma,
   arma::vec temp_meas_time;
   arma::vec censorind;
 
-  List res(n);
+  arma::field<arma::mat>  res(n);
   for (i = 0; i < n; i++) {
     temp_meas_time = vec(meas_times[i].begin(),meas_times[i].size(),false);
     s1sumres = arma::zeros<arma::dmat>(temp_meas_time.n_elem, p);
@@ -86,19 +84,66 @@ arma::vec ugamma2_C(const arma::rowvec& gamma,
                     const arma::vec& censor, const unsigned int& n,
                     const unsigned int& p) {
   unsigned int i = 0;
-  List zbarres = zbar_c(gamma, kerMat, meas_times, covariates, censor, n, p);
+  arma::field<arma::mat> zbarres = zbar_c(gamma, kerMat, meas_times, covariates, censor, n, p);
   arma::mat temp_kermat;
   arma::mat temp_zbari;
   arma::mat res = arma::zeros<arma::vec>(p);
   for (i = 0; i < n; i++) {
-    temp_zbari = Rcpp::as<arma::mat>(zbarres[i]);
+    //temp_zbari = Rcpp::as<arma::mat>(zbarres[i]);
     //mat(zbarres[i].begin(),zbarres[i].nrow(),zbarres[i].ncol(),false);
     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
 
-    res = res + arma::conv_to<arma::vec>::from(sum(temp_zbari * temp_kermat, 1));
+    res = res + arma::conv_to<arma::vec>::from(zbarres[i] * sum(temp_kermat, 1));
   }
   return res;
 }
+
+
+// [[Rcpp::export]]
+arma::vec ugamma2_test_C(const arma::rowvec& gamma,
+                    Rcpp::ListOf<NumericMatrix>& kerMat,
+                    Rcpp::ListOf<NumericVector>& meas_times,
+                    Rcpp::ListOf<NumericMatrix>& covariates,
+                    const arma::vec& censor, const unsigned int& n,
+                    const unsigned int& p) {
+  unsigned int i,l = 0;
+  //arma::field<arma::mat> zbarres = zbar_c(gamma, kerMat, meas_times, covariates, censor, n, p);
+  arma::mat temp_kermat,temp_cov,temp_KerexpgamZ,temp_expgamZ;
+
+  //arma::mat temp_zbari;
+  //arma::field < arma::mat > zbar_list(n);
+  //arma::mat temp;
+  arma::vec temp_meas_time_i;
+  arma::mat zbar_temp_i,temp;
+  arma::vec censorind;
+  arma::rowvec expgammaZ;
+  arma::vec res = arma::zeros<arma::vec>(p);
+  arma::vec den_temp;
+  for (i = 0; i < n; i++) {
+    temp_meas_time_i = vec(meas_times[i].begin(), meas_times[i].size(), false);
+    zbar_temp_i = arma::zeros<arma::dmat>(temp_meas_time_i.n_elem, p);
+    den_temp = arma::zeros<arma::vec>(temp_meas_time_i.n_elem);
+    for( l =0; l<n; l++){
+      //temp_zbari = Rcpp::as<arma::mat>(zbarres[i]);
+      //mat(zbarres[i].begin(),zbarres[i].nrow(),zbarres[i].ncol(),false);
+      temp_kermat = mat(kerMat[i * n + l].begin(),kerMat[i * n + l].nrow(),kerMat[i * n + l].ncol(),false);
+      temp_cov = mat(covariates[l].begin(),covariates[l].nrow(),covariates[l].ncol(),false);
+      temp_expgamZ = exp(gamma * temp_cov);
+      //temp_KerexpgamZ = temp_kermat.each_row() % exp(gamma * temp_cov);
+      censorind = conv_to < arma::vec > ::from(censor[l] > temp_meas_time_i);
+      //temp_KerexpgamZ.each_col() %= censorind;
+      temp = temp_kermat * (temp_cov.each_row() % temp_expgamZ).t();
+      zbar_temp_i += temp.each_col() /  censorind;
+
+      den_temp += temp_kermat * temp_expgamZ.t() / censorind;
+    }
+    temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
+    zbar_temp_i.each_col() /= den_temp;
+    res += zbar_temp_i.t() * sum(temp_kermat,1);
+  }
+  return res;
+}
+
 
 
 // Calculate S^{(0)} for \Lambda(t)
@@ -119,16 +164,17 @@ Rcpp::List dlambda_C(const arma::rowvec& gamma,
   arma::vec censorind;
   List res(n);
   for (i = 0; i < n; i++) {
-    temp_meas_time = Rcpp::as<arma::vec>(meas_times[i]);
+    //temp_meas_time = Rcpp::as<arma::vec>(meas_times[i]);
+    temp_meas_time = vec(meas_times[i].begin(),meas_times[i].size(),false);
     s0sumres = arma::zeros<arma::dmat>(temp_meas_time.n_elem, 1);
     //s0weightsum = arma::zeros<arma::dmat>(temp_meas_time.n_elem, 1);
     for (l = 0; l < n; l++) {
       temp_kermat = mat(kerMat[i * n + l].begin(),kerMat[i * n + l].nrow(),kerMat[i * n + l].ncol(),false);
       temp_cov = mat(covariates[l].begin(),covariates[l].nrow(),covariates[l].ncol(),false);
-      expgammaZ = exp(gamma * temp_cov);
+      //expgammaZ = exp(gamma * temp_cov);
       censorind = conv_to<arma::vec>::from(censor[l] > temp_meas_time);
-      temp0 =  temp_kermat * expgammaZ.t();
-      temp0 = temp0.each_col() % censorind;
+      temp0 =  temp_kermat * exp(gamma * temp_cov).t();
+      temp0.each_col() %= censorind;
       //s0weightsum = s0weightsum + sum(temp_kermat, 1);
       s0sumres = s0sumres + temp0;
     }
