@@ -1,10 +1,11 @@
 #include <RcppArmadillo.h>
 //[[Rcpp::depends(RcppArmadillo)]]
+//#include "optim.hpp"
 #include <iostream>
 using namespace arma;
 using namespace Rcpp;
 using namespace std;
-
+#include "numeric.hpp"
 /* ===========================================
  * Estimation for observation process
  * ===========================================
@@ -76,31 +77,31 @@ arma::field<arma::mat> zbar_c(const arma::rowvec& gamma,
 
 
 // Second part of ugamma
+// // [[Rcpp::export]]
+// arma::vec ugamma2_C(const arma::rowvec& gamma,
+//                     Rcpp::ListOf<NumericMatrix>& kerMat,
+//                     Rcpp::ListOf<NumericVector>& meas_times,
+//                     Rcpp::ListOf<NumericMatrix>& covariates,
+//                     const arma::vec& censor, const unsigned int& n,
+//                     const unsigned int& p) {
+//   unsigned int i = 0;
+//   arma::field<arma::mat> zbarres = zbar_c(gamma, kerMat, meas_times, covariates, censor, n, p);
+//   arma::mat temp_kermat;
+//   arma::mat temp_zbari;
+//   arma::mat res = arma::zeros<arma::vec>(p);
+//   for (i = 0; i < n; i++) {
+//     //temp_zbari = Rcpp::as<arma::mat>(zbarres[i]);
+//     //mat(zbarres[i].begin(),zbarres[i].nrow(),zbarres[i].ncol(),false);
+//     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
+//
+//     res = res + arma::conv_to<arma::vec>::from(zbarres[i] * sum(temp_kermat, 1));
+//   }
+//   return res;
+// }
+
+
 // [[Rcpp::export]]
 arma::vec ugamma2_C(const arma::rowvec& gamma,
-                    Rcpp::ListOf<NumericMatrix>& kerMat,
-                    Rcpp::ListOf<NumericVector>& meas_times,
-                    Rcpp::ListOf<NumericMatrix>& covariates,
-                    const arma::vec& censor, const unsigned int& n,
-                    const unsigned int& p) {
-  unsigned int i = 0;
-  arma::field<arma::mat> zbarres = zbar_c(gamma, kerMat, meas_times, covariates, censor, n, p);
-  arma::mat temp_kermat;
-  arma::mat temp_zbari;
-  arma::mat res = arma::zeros<arma::vec>(p);
-  for (i = 0; i < n; i++) {
-    //temp_zbari = Rcpp::as<arma::mat>(zbarres[i]);
-    //mat(zbarres[i].begin(),zbarres[i].nrow(),zbarres[i].ncol(),false);
-    temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
-
-    res = res + arma::conv_to<arma::vec>::from(zbarres[i] * sum(temp_kermat, 1));
-  }
-  return res;
-}
-
-
-// [[Rcpp::export]]
-arma::vec ugamma2_test_C(const arma::rowvec& gamma,
                     Rcpp::ListOf<NumericMatrix>& kerMat,
                     Rcpp::ListOf<NumericVector>& meas_times,
                     Rcpp::ListOf<NumericMatrix>& covariates,
@@ -188,6 +189,108 @@ Rcpp::List dlambda_C(const arma::rowvec& gamma,
 }
 
 
+//==========================================================================================================
 
+// struct sim_data_t
+// {
+//   Rcpp::ListOf<NumericMatrix>* kerMat;
+//   Rcpp::ListOf<NumericVector>* meas_times;
+//   Rcpp::ListOf<NumericMatrix>* covariates;
+//   arma::vec ugamma1;
+//   const arma::vec* censor;
+//   const unsigned int* n;
+//   const unsigned int* p;
+// };
+//
+// arma::vec ugamma_wrapper_C(const arma::vec& gamma_inp, void* opt_data){
+//   sim_data_t* objfn_data = reinterpret_cast<sim_data_t*>(opt_data);
+//   arma::rowvec gamma_inp_row = gamma_inp.t();
+//   arma::vec ugamma2 = ugamma2_C(gamma_inp_row,
+//                             *(objfn_data->kerMat),
+//                             *(objfn_data->meas_times),
+//                             *(objfn_data->covariates),
+//                             *(objfn_data->censor),
+//                             *(objfn_data->n),
+//                             *(objfn_data->p));
+//   return objfn_data->ugamma1-ugamma2;
+// }
+//
+// struct Ugamma_fun
+// {
+//   Rcpp::ListOf<NumericMatrix>* kerMat;
+//   Rcpp::ListOf<NumericVector>* meas_times;
+//   Rcpp::ListOf<NumericMatrix>* covariates;
+//   const arma::vec* censor;
+//   const unsigned int* n;
+//   const unsigned int* p;
+//   arma::vec ugamma1;
+//   void cal_ugamma1() { ugamma1 =  ugamma1_C(*kerMat,*covariates,*n,*p);}
+//   arma::vec operator()(arma::vec gamma) {
+//     return ugamma1 - ugamma2_C(gamma, *kerMat, *meas_times, *covariates, *censor, *n, *p);
+//     //return pow(x,3) -gamma;
+//   }
+// };
 
+// // [[Rcpp::export]]
+// arma::vec ugamma_wrapper_test_C(const arma::rowvec& gamma,
+//                                  Rcpp::ListOf<NumericMatrix>& kerMat,
+//                                  Rcpp::ListOf<NumericVector>& meas_times,
+//                                  Rcpp::ListOf<NumericMatrix>& covariates,
+//                                  const arma::vec& censor, const unsigned int& n,
+//                                  const unsigned int& p){
+//   sim_data_t objfn_data;
+//   objfn_data.kerMat = &kerMat;
+//   objfn_data.meas_times = &meas_times;
+//   objfn_data.covariates = &covariates;
+//   objfn_data.censor = &censor;
+//   objfn_data.n = &n;
+//   objfn_data.p = &p;
+//   //arma::rowvec gamma_inp = gamma;
+//   arma::vec res = ugamma_wrapper_C(gamma, &objfn_data);
+//   return res;
+// }
 
+//
+// // [[Rcpp::export]]
+// arma::vec gammaest_C(arma::vec& gamma_inp,
+//                      Rcpp::ListOf<NumericMatrix>& kerMat,
+//                      Rcpp::ListOf<NumericVector>& meas_times,
+//                      Rcpp::ListOf<NumericMatrix>& covariates,
+//                      const arma::vec& censor, const unsigned int& n,
+//                      const unsigned int& p){
+//   arma::vec ugamma1 = ugamma1_C(kerMat,covariates,n,p);
+//   sim_data_t objfn_data;
+//   objfn_data.kerMat = &kerMat;
+//   objfn_data.ugamma1 = ugamma1;
+//   objfn_data.meas_times = &meas_times;
+//   objfn_data.covariates = &covariates;
+//   objfn_data.censor = &censor;
+//   objfn_data.n = &n;
+//   objfn_data.p = &p;
+//   arma::vec gamma_inp_temp = gamma_inp;
+//   bool success = optim::broyden_df(gamma_inp_temp, ugamma_wrapper_C, &objfn_data);
+//   return gamma_inp_temp;
+// }
+
+//// [[Rcpp::export]]
+// arma::vec gammaest_C(arma::vec& gamma_inp,
+//                      Rcpp::ListOf<NumericMatrix>& kerMat,
+//                      Rcpp::ListOf<NumericVector>& meas_times,
+//                      Rcpp::ListOf<NumericMatrix>& covariates,
+//                      const arma::vec& censor, const unsigned int& n,
+//                      const unsigned int& p, arma::vec& ugamma1){
+//   //arma::vec ugamma1 = ugamma1_C(kerMat,covariates,n,p);
+//   Ugamma_fun ugamma;
+//   ugamma.kerMat = &kerMat;
+//   ugamma.ugamma1 = ugamma1;
+//   ugamma.meas_times = &meas_times;
+//   ugamma.covariates = &covariates;
+//   ugamma.censor = &censor;
+//   ugamma.n = &n;
+//   ugamma.p = &p;
+//   //ugamma.cal_ugamma1();
+//   arma::vec gamma_inp_temp = gamma_inp;
+//   bool check = false;
+//   arma::vec res = broyden(gamma_inp_temp, ugamma, check);
+//   return res;
+// }

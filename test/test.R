@@ -46,7 +46,7 @@ set.seed(8102)
 nsample <- 100
 
 
-infl <- 2
+infl <- 1
 simdatasam <-
   replicate(
     nsample,
@@ -103,7 +103,9 @@ testlong <- longest_test_c(gamma = 1,
 
 testlong[[1]]
 
+ugamma2_test_C(1,kerMat,meas_obs_list,covar_list,censor_list,nsample,1)
 
+gammaest_C(1,kerMat,meas_obs_list,covar_list,censor_list,nsample,1)
 
 nsample <-  500
 infl <- 2

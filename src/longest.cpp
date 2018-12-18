@@ -106,6 +106,7 @@ Rcpp::List longest_c(const arma::rowvec & gamma,
   arma::mat thetaden = mat(p + 1, p + 1, arma::fill::zeros);
   arma::vec temp_kermat_rowsum;
   // Rcpp::Rcout <<  "11" <<endl;
+  // Calculate \hat{theta}
   for (i = 0; i < n; i++) {
     temp_meas_time_i = vec(meas_times[i].begin(), meas_times[i].size(), false);
     temp_response = vec(response[i].begin(), response[i].size(), false);

@@ -22,7 +22,6 @@
  * Broyden's method for solving systems of nonlinear equations
  */
 
-
 #include "optim.hpp"
 
 bool
@@ -303,6 +302,8 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
 
     double Fx = arma::norm(f_val,2);
 
+
+
     //
 
     arma::vec d = -f_val; // step 1
@@ -324,18 +325,22 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
     if (Fx_p <= rho*Fx - sigma_2*arma::dot(d,d)) { // step 2
         lambda = 1.0;
     } else {
-        lambda = df_proc_1(x,d,sigma_1,0,opt_objfn,opt_data); // step 3
+        lambda = df_proc_1(x,d,sigma_1,1,opt_objfn,opt_data); // step 3
     }
+
 
     //
 
     arma::vec x_p = x + lambda*d; // step 4
 
+    f_val_p = opt_objfn(x_p,opt_data);
+
     arma::vec s = x_p - x;
     arma::vec y = f_val_p - f_val;
 
-    // B += (y - B*s) * s.t() / arma::dot(s,s); // step 5
-    B += (s - B*y) * y.t() / arma::dot(y,y);
+
+    B += (y - B*s) * s.t() / arma::dot(s,s); // step 5
+    // B += (s - B*y) * y.t() / arma::dot(y,y);
 
     //
 
@@ -353,7 +358,7 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
         iter++;
 
         // d = arma::solve(B,-f_val);
-        d = - B*f_val;
+        d = - B.i()*f_val;
         f_val_p = opt_objfn(x + d,opt_data);
 
         err = arma::accu(arma::abs(f_val));
@@ -379,8 +384,8 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
         arma::vec s = x_p - x;
         arma::vec y = f_val_p - f_val;
 
-        // B += (y - B*s) * s.t() / arma::dot(s,s);
-        B += (s - B*y) * y.t() / arma::dot(y,y); // update B
+        B += (y - B*s) * s.t() / arma::dot(s,s);
+        // B += (s - B*y) * y.t() / arma::dot(y,y); // update B
 
         //
 
@@ -501,6 +506,8 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
     {
         iter++;
 
+
+
         // d = arma::solve(B,-f_val);
         d = - B*f_val;
         f_val_p = opt_objfn(x + d,opt_data);
@@ -515,6 +522,8 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
 
         Fx_p = arma::norm(f_val_p,2);
 
+        std::cout <<Fx_p << std::endl;
+
         if (Fx_p <= rho*Fx - sigma_2*arma::dot(d,d)) {
             lambda = 1.0;
         } else {
@@ -528,7 +537,7 @@ optim::broyden_df_int(arma::vec& init_out_vals, std::function<arma::vec (const a
         arma::vec s = x_p - x;
         arma::vec y = f_val_p - f_val;
 
-        if (iter % 5 == 0) {
+        if (iter % 1 == 0) {
             // B = jacob_objfn(x_p,jacob_data);
             B = arma::inv(jacob_objfn(x_p,jacob_data));
         } else {
@@ -601,13 +610,17 @@ optim::df_proc_1(const arma::vec& x_vals, const arma::vec& direc, double sigma_1
 
     while (1)
     {
+        Rcpp::checkUserInterrupt();
         iter++;
+        // if(iter > 10000) break;
         lambda *= beta; // lambda_i = beta^i;
 
         //
 
         Fx_p = arma::norm(opt_objfn(x_vals + lambda*direc,opt_data),2);
         term_2 = sigma_1*std::pow(lambda,2)*direc_norm2;
+
+        //std::cout << Fx_p << std::endl;
 
         if (Fx_p <= Fx - term_2 + term_3) {
             break;
