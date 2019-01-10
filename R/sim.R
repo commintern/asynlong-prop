@@ -52,9 +52,7 @@ simrun <- function(nrep,nsample,p,infl=2,obscov_rate,lambda0_val,mu0,beta0,alpha
     censor = censor,
     horder = horder
   )
-
   cat("End: \n")
-
   bias <- colMeans(simres)-c(gamma0,beta0,alpha0)
   variance <- diag(var(simres))
   stdev <- sqrt(variance)

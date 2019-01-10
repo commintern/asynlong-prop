@@ -36,12 +36,17 @@ simCoxpro <-
 # Generate simple convariates by step funtions
 ##
 
-simsimcov <-  function(meas_times, obscov_times,p,nstep=20, weight=c(0.4), means=c(-1,1.5)) {
-
-  meas_cov <- Zfun(meas_times)
-  obscov_cov <- Zfun(obscov_times)
-  return(list(meas_cov=meas_cov,obscov_cov=obscov_cov))
-}
+simsimcov <-
+  function(meas_times,
+           obscov_times,
+           p,
+           nstep = 20,
+           weight = c(0.4),
+           means = c(-1, 1.5)) {
+    meas_cov <- Zfun(meas_times)
+    obscov_cov <- Zfun(obscov_times)
+    return(list(meas_cov = meas_cov, obscov_cov = obscov_cov))
+  }
 
 # Generate responses
 
@@ -67,9 +72,10 @@ simresponse <-
 
 simAsyLongdata <-
   function(obscov_rate,
-           lambda0, # just a constant
-           lmax=NULL,
-           nstep =20,
+           lambda0,
+           # just a constant
+           lmax = NULL,
+           nstep = 20,
            mu0,
            beta,
            alpha,
@@ -85,33 +91,31 @@ simAsyLongdata <-
 
     # 2. Generate Z(t) and lambda(t) as a step function
 
-    Sigmat_z <- exp(-abs(outer(1:nstep, 1:nstep, "-"))/nstep)
+    Sigmat_z <- exp(-abs(outer(1:nstep, 1:nstep, "-")) / nstep)
 
-
-    nmeas_time <- 0
-    #     # Make sure that the number of measurment times >0
-    while (nmeas_time <= 0) {
     z <- mvrnorm(p, rep(0, nstep), Sigmat_z)
 
-    left_time_points <- (0:(nstep-1))/nstep
-    lam_fun <- stepfun(left_time_points,c(0,lambda0(left_time_points)+gamma %*% z))
-
+    left_time_points <- (0:(nstep - 1)) / nstep
+    lam_fun <-
+      stepfun(left_time_points, c(0, lambda0(left_time_points) * exp(gamma %*% z)))
 
 
     # 3. Generate observed covariates
-    z_fun <- stepfun(left_time_points,c(0,z))
+    z_fun <- stepfun(left_time_points, c(0, z))
     covariates_obscov <- z_fun(obscov_times)
 
     # 4. Generate measurement times by thining
+    nmeas_time <- 0
+    lmax <- max(lambda0(left_time_points) * exp(gamma %*% z))
+    #     # Make sure that the number of measurment times >0
+    while (nmeas_time <= 0) {
+      meas_times <- simhomoPoipro(lmax, cen)
+      meas_lam <- lam_fun(meas_times)
+      selidx <- runif(length(meas_lam))  < meas_lam / lmax
+      meas_times <- meas_times[selidx]
+      covariates_meas <- z_fun(meas_times)
 
-    lmax <- max(lambda0(left_time_points)+gamma %*% z)
-    meas_times <- simhomoPoipro(lmax, cen)
-    meas_lam <- lam_fun(meas_times)
-    selidx <- runif(length(meas_lam))  < meas_lam/lmax
-    meas_times <- meas_times[selidx]
-    covariates_meas <- z_fun(meas_times)
-
-    nmeas_time <- length(meas_times)
+      nmeas_time <- length(meas_times)
     }
 
     # 5.Generate responses Y
@@ -125,7 +129,7 @@ simAsyLongdata <-
       list(
         Y = response,
         meas_times = meas_times,
-        covariates = matrix(covariates_obscov,nrow = p),
+        covariates = matrix(covariates_obscov, nrow = p),
         obscov_times = obscov_times,
         censoring = cen
       )

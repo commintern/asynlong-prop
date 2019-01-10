@@ -3,7 +3,7 @@ library("doParallel")
  library('asynlong')
 #stopCluster(cl)
 
-cl <- makeCluster(24,outfile="debug.txt")
+cl <- makeCluster(4,outfile="debug.txt")
 registerDoParallel(cl)
 clusterEvalQ(cl,{
   library('asynlong')
@@ -27,16 +27,16 @@ simcol <- function(horderlist,nrep,nsample,p,infl,obscov_rate,lambda0_val,mu0,be
 
 # simcol(nrep = 1000, nsample = 100,p = 1,infl = 1, obscov_rate = 6,lambda0_val = 2,
 #        mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(0.6,0.7,0.8,0.9))
-# 
+#
 # simcol(nrep = 1000, nsample = 500,p = 1,infl = 1, obscov_rate = 6,lambda0_val = 2,
 #        mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(0.6,0.7,0.8,0.9))
-# 
+#
 # simcol(nrep = 1000, nsample = 1000,p = 1,infl = 1, obscov_rate = 6,lambda0_val = 2,
 #        mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(0.6,0.7,0.8,0.9))
-# 
+#
 # simcol(nrep = 1000, nsample = 2000,p = 1,infl = 1, obscov_rate = 6,lambda0_val = 2,
 #        mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(0.6,0.7,0.8,0.9))
-# 
+#
 # simcol(nrep = 1000, nsample = 3000,p = 1,infl = 1, obscov_rate = 6,lambda0_val = 2,
 #        mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(0.6,0.7,0.8,0.9))
 
@@ -45,8 +45,8 @@ simcol <- function(horderlist,nrep,nsample,p,infl,obscov_rate,lambda0_val,mu0,be
 
 
 
-simcol(nrep = 1000, nsample = 100,p = 1,infl = 2, obscov_rate = 6,lambda0_val = 2,
-       mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(2:8)/10)
+simcol(nrep = 500, nsample = 100,p = 1,infl = 1, obscov_rate = 6,lambda0_val = 6,
+       mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(6:8)/10)
 
 simcol(nrep = 1000, nsample = 500,p = 1,infl = 2, obscov_rate = 6,lambda0_val = 2,
        mu0 = function(x) exp(sin(2 * pi * x)), beta0 = -2, alpha0 = 1, gamma0 = 1, censor = 1, horder = c(2:8)/10)
