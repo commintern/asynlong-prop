@@ -50,24 +50,24 @@ asymptotic <-
            meas_obs_list,
            covar_list,
            censor_list,
-           Xbar,
-           XXtbar,
            response_list,
            thetahat,
            gammahat,
            n,
            p,
            h) {
-    # Xbar_res <-
-    #   Xbar_c(
-    #     gammahat,
-    #     kerMat = kerMat,
-    #     meas_times = meas_obs_list,
-    #     covariates = covar_list,
-    #     censor = censor_list,
-    #     n,
-    #     p
-    #   )
+    Xbar_res <-
+      Xbar_c(
+        gammahat,
+        thetahat,
+        kerMat = kerMat,
+        meas_times = meas_obs_list,
+        covariates = covar_list,
+        censor = censor_list,
+        n,
+        p
+      )
+    browser()
     #
     # S0_res <- Xbar_res$S0
     # Xbar_res <- Xbar_res$Xbar
@@ -83,20 +83,22 @@ asymptotic <-
     #   n,
     #   p
     # )
-    # P_D_res <-
-    #   P_D_c(
-    #     gamma = gammahat,
-    #     theta = thetahat,
-    #     kerMat = kerMat,
-    #     meas_times = meas_obs_list,
-    #     covariates = covar_list,
-    #     Xbar = Xbar_res,
-    #     dlambda = dlambda_list,
-    #     mu0 = gmu0_list,
-    #     censor = censor_list,
-    #     n = n,
-    #     p = p
-    #   )
+    H_A_res <-
+      H_A_c(
+        gamma = gammahat,
+        theta = thetahat,
+        kerMat = kerMat,
+        meas_times = meas_obs_list,
+        covariates = covar_list,
+        response = response_list,
+        Xbar = Xbar_res$Xbar,
+        XXtbar = Xbar_res$XXtbar,
+        XXtZbar = Xbar_res$XXtZbar,
+        S0 = Xbar_res$S0,
+        censor = censor_list,
+        n = n,
+        p = p
+      )
     # Pmat <- P_D_res$P
     # Dmat <- P_D_res$D
     # DO Not forget the kernel part
@@ -110,6 +112,8 @@ asymptotic <-
         Xbar = Xbar,
         XXtbar = XXtbar,
         response = response_list,
+        H_A_res$Hmat,
+        H_A_res$Amat,
         censor = censor_list,
         n = n,
         p = p
@@ -186,8 +190,6 @@ estasy <- function(dataset, kerFun, h, n, p) {
              meas_obs_list,
              covar_list,
              censor_list,
-             Xbar = longest_res$Xbar,
-             XXtbar = longest_res$XXtbar,
              response_list,
              longest_res[[1]],
              gammaest_res$x,

@@ -5,16 +5,12 @@ Xbar_c <- function(gamma, theta, kerMat, meas_times, covariates, censor, n, p) {
     .Call(`_asynlong_Xbar_c`, gamma, theta, kerMat, meas_times, covariates, censor, n, p)
 }
 
-Rs_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, S0, censor, n, p) {
-    .Call(`_asynlong_Rs_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, S0, censor, n, p)
+H_A_c <- function(gamma, theta, kerMat, meas_times, covariates, response, Xbar, XXtbar, XXtZbar, S0, censor, n, p) {
+    .Call(`_asynlong_H_A_c`, gamma, theta, kerMat, meas_times, covariates, response, Xbar, XXtbar, XXtZbar, S0, censor, n, p)
 }
 
-P_D_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, dlambda, mu0, censor, n, p) {
-    .Call(`_asynlong_P_D_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, dlambda, mu0, censor, n, p)
-}
-
-long_asy_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, censor, n, p) {
-    .Call(`_asynlong_long_asy_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, censor, n, p)
+long_asy_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
+    .Call(`_asynlong_long_asy_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p)
 }
 
 countprofun_C <- function(counttime, externalTime) {
