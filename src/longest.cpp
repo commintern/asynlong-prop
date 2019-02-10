@@ -67,6 +67,7 @@ arma::cube Xgen_C(const arma::mat& covMat, const arma::vec& countprocess, const 
 }
 
 
+
 // [[Rcpp::export]]
 Rcpp::List longest_c(const arma::rowvec & gamma,
                      Rcpp::ListOf < NumericMatrix > & kerMat,
@@ -184,7 +185,9 @@ Rcpp::List longest_c(const arma::rowvec & gamma,
     gmu0est(i) = temp_response - Xbar_list(i) * thetaest;
   }
   return Rcpp::List::create(Rcpp::Named("thetaest") = thetaest,
-                            Rcpp::Named("gmu0est") = gmu0est);
+                            Rcpp::Named("gmu0est") = gmu0est,
+                            Rcpp::Named("Xbar") = Xbar_list,
+                            Rcpp::Named("XXtbar") = XXtbar_list);
 
   //   return Rcpp::List::create(Rcpp::Named("thetaest") = thetaest,
   //                             Rcpp::Named("Xbar_list") = Xbar_list,

@@ -6,6 +6,86 @@
 
 using namespace Rcpp;
 
+// Xbar_c
+Rcpp::List Xbar_c(const arma::rowvec& gamma, const arma::rowvec& theta, Rcpp::ListOf<NumericMatrix>& kerMat, Rcpp::ListOf<NumericVector>& meas_times, Rcpp::ListOf<NumericMatrix>& covariates, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
+RcppExport SEXP _asynlong_Xbar_c(SEXP gammaSEXP, SEXP thetaSEXP, SEXP kerMatSEXP, SEXP meas_timesSEXP, SEXP covariatesSEXP, SEXP censorSEXP, SEXP nSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type kerMat(kerMatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type meas_times(meas_timesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type censor(censorSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(Xbar_c(gamma, theta, kerMat, meas_times, covariates, censor, n, p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Rs_c
+Rcpp::List Rs_c(const arma::rowvec& gamma, const arma::rowvec& theta, Rcpp::ListOf<NumericMatrix>& kerMat, Rcpp::ListOf<NumericVector>& meas_times, Rcpp::ListOf<NumericMatrix>& covariates, Rcpp::ListOf<NumericMatrix>& Xbar, Rcpp::ListOf<NumericVector>& S0, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
+RcppExport SEXP _asynlong_Rs_c(SEXP gammaSEXP, SEXP thetaSEXP, SEXP kerMatSEXP, SEXP meas_timesSEXP, SEXP covariatesSEXP, SEXP XbarSEXP, SEXP S0SEXP, SEXP censorSEXP, SEXP nSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type kerMat(kerMatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type meas_times(meas_timesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type Xbar(XbarSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type S0(S0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type censor(censorSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(Rs_c(gamma, theta, kerMat, meas_times, covariates, Xbar, S0, censor, n, p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// P_D_c
+Rcpp::List P_D_c(const arma::rowvec& gamma, const arma::rowvec& theta, Rcpp::ListOf<NumericMatrix>& kerMat, Rcpp::ListOf<NumericVector>& meas_times, Rcpp::ListOf<NumericMatrix>& covariates, Rcpp::ListOf<NumericMatrix>& Xbar, Rcpp::ListOf<NumericVector>& dlambda, Rcpp::ListOf<NumericVector>& mu0, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
+RcppExport SEXP _asynlong_P_D_c(SEXP gammaSEXP, SEXP thetaSEXP, SEXP kerMatSEXP, SEXP meas_timesSEXP, SEXP covariatesSEXP, SEXP XbarSEXP, SEXP dlambdaSEXP, SEXP mu0SEXP, SEXP censorSEXP, SEXP nSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type kerMat(kerMatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type meas_times(meas_timesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type Xbar(XbarSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type dlambda(dlambdaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type mu0(mu0SEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type censor(censorSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(P_D_c(gamma, theta, kerMat, meas_times, covariates, Xbar, dlambda, mu0, censor, n, p));
+    return rcpp_result_gen;
+END_RCPP
+}
+// long_asy_c
+Rcpp::List long_asy_c(const arma::rowvec& gamma, const arma::rowvec& theta, Rcpp::ListOf<NumericMatrix>& kerMat, Rcpp::ListOf<NumericVector>& meas_times, Rcpp::ListOf<NumericMatrix>& covariates, Rcpp::ListOf<NumericMatrix>& Xbar, Rcpp::ListOf<NumericVector>& XXtbar, Rcpp::ListOf<NumericVector>& response, const arma::vec& censor, const unsigned int& n, const unsigned int& p);
+RcppExport SEXP _asynlong_long_asy_c(SEXP gammaSEXP, SEXP thetaSEXP, SEXP kerMatSEXP, SEXP meas_timesSEXP, SEXP covariatesSEXP, SEXP XbarSEXP, SEXP XXtbarSEXP, SEXP responseSEXP, SEXP censorSEXP, SEXP nSEXP, SEXP pSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type gamma(gammaSEXP);
+    Rcpp::traits::input_parameter< const arma::rowvec& >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type kerMat(kerMatSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type meas_times(meas_timesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type covariates(covariatesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericMatrix>& >::type Xbar(XbarSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type XXtbar(XXtbarSEXP);
+    Rcpp::traits::input_parameter< Rcpp::ListOf<NumericVector>& >::type response(responseSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type censor(censorSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const unsigned int& >::type p(pSEXP);
+    rcpp_result_gen = Rcpp::wrap(long_asy_c(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, censor, n, p));
+    return rcpp_result_gen;
+END_RCPP
+}
 // countprofun_C
 arma::vec countprofun_C(const arma::vec& counttime, const arma::vec& externalTime);
 RcppExport SEXP _asynlong_countprofun_C(SEXP counttimeSEXP, SEXP externalTimeSEXP) {
@@ -179,6 +259,10 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_asynlong_Xbar_c", (DL_FUNC) &_asynlong_Xbar_c, 8},
+    {"_asynlong_Rs_c", (DL_FUNC) &_asynlong_Rs_c, 10},
+    {"_asynlong_P_D_c", (DL_FUNC) &_asynlong_P_D_c, 11},
+    {"_asynlong_long_asy_c", (DL_FUNC) &_asynlong_long_asy_c, 11},
     {"_asynlong_countprofun_C", (DL_FUNC) &_asynlong_countprofun_C, 2},
     {"_asynlong_Xgen_C", (DL_FUNC) &_asynlong_Xgen_C, 3},
     {"_asynlong_longest_c", (DL_FUNC) &_asynlong_longest_c, 9},

@@ -16,18 +16,18 @@ clusterEvalQ(cl,{
 
 
 simres <- simmain(
-  nrep = 10,
+  nrep = 100,
   nsample = 100,
   p = 1,
   infl = 2,
   obscov_rate = 6,
-  lambda0_val = 2,
+  lambda0_val = 4,
   mu0 = function(x)
     exp(sin(2 * pi * x)),
   beta = 2,
   alpha = 1,
   gamma = 1,
-  cenor = 1,
+  censor = 1,
   horder = 0.6
 )
 
@@ -41,7 +41,7 @@ sqrt(colMeans(t((t(simres)-c(1,2,1))^2)))
 
 simres <- simmain(
   nrep = 100,
-  nsample = 300,
+  nsample = 100,
   p = 1,
   infl = 2,
   obscov_rate = 6,
@@ -77,9 +77,24 @@ simres <- simmain(
 )
 colMeans(t((t(simres)-c(1,2,1))^2))
 
+
+library(doParallel)
+
+stopCluster(cl)
+
+cl <- makeCluster(6)
+registerDoParallel(cl)
+clusterEvalQ(cl,{
+  library('asynlong')
+  library("MASS")
+  #library("reda")
+  library("extraDistr")
+  library("nleqslv")
+})
+
 simrun(
-  nrep = 10,
-  nsample = 100,
+  nrep = 100,
+  nsample = 300,
   p = 1,
   infl = 2,
   obscov_rate = 6,
