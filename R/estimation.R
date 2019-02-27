@@ -67,7 +67,9 @@ asymptotic <-
         n,
         p
       )
-    browser()
+
+    print(Xbar_res$XXtbar[[1]])
+
     #
     # S0_res <- Xbar_res$S0
     # Xbar_res <- Xbar_res$Xbar
@@ -99,6 +101,8 @@ asymptotic <-
         n = n,
         p = p
       )
+
+    print(H_A_res)
     # Pmat <- P_D_res$P
     # Dmat <- P_D_res$D
     # DO Not forget the kernel part
@@ -109,11 +113,11 @@ asymptotic <-
         kerMat = kerMat,
         meas_times = meas_obs_list,
         covariates = covar_list,
-        Xbar = Xbar,
-        XXtbar = XXtbar,
+        Xbar = Xbar_res$Xbar,
+        XXtbar = Xbar_res$XXtbar,
         response = response_list,
-        H_A_res$Hmat,
-        H_A_res$Amat,
+        Hmat = H_A_res$Hmat,
+        Amat = H_A_res$Amat,
         censor = censor_list,
         n = n,
         p = p
@@ -132,7 +136,7 @@ asymptotic <-
     #     n = n,
     #     p = p
     #   )
-    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% solve(Asymest$Bmat) / (n * h)
+    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% solve(Asymest$Bmat)
     return(as.vector(thetahat) + cbind(-1 * qnorm(0.95) * sqrt(diag(varest)), qnorm(0.95) * sqrt(diag(varest))))
   }
 
@@ -158,6 +162,8 @@ estasy <- function(dataset, kerFun, h, n, p) {
   gammaest_res <-
     gammaest(kerMat, meas_obs_list, covar_list, censor_list, n, p)
   # TODO consider add error handling and logging if not converges
+
+  print(gammaest_res$x)
 
   lambdaest_res <-
     lambdaest(gammaest_res$x,

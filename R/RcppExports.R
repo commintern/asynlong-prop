@@ -45,6 +45,10 @@ dlambda_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
     .Call(`_asynlong_dlambda_C`, gamma, kerMat, meas_times, covariates, censor, n, p)
 }
 
+ugamma_C_1 <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
+    .Call(`_asynlong_ugamma_C_1`, gamma, kerMat, meas_times, covariates, censor, n, p)
+}
+
 outermin_C <- function(x, y) {
     .Call(`_asynlong_outermin_C`, x, y)
 }
