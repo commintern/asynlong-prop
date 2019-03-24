@@ -9,8 +9,20 @@ H_A_c <- function(gamma, theta, kerMat, meas_times, covariates, response, Xbar, 
     .Call(`_asynlong_H_A_c`, gamma, theta, kerMat, meas_times, covariates, response, Xbar, XXtbar, XXtZbar, S0, censor, n, p)
 }
 
-long_asy_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
-    .Call(`_asynlong_long_asy_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p)
+long_asy_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, gmu, response, Hmat, Amat, lambda, censor, n, p) {
+    .Call(`_asynlong_long_asy_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, gmu, response, Hmat, Amat, lambda, censor, n, p)
+}
+
+EE_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
+    .Call(`_asynlong_EE_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p)
+}
+
+EEZ_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
+    .Call(`_asynlong_EEZ_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p)
+}
+
+EEZV_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
+    .Call(`_asynlong_EEZV_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p)
 }
 
 countprofun_C <- function(counttime, externalTime) {
@@ -39,6 +51,10 @@ zbar_c <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
 
 ugamma2_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
     .Call(`_asynlong_ugamma2_C`, gamma, kerMat, meas_times, covariates, censor, n, p)
+}
+
+ugamma2_C_n <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
+    .Call(`_asynlong_ugamma2_C_n`, gamma, kerMat, meas_times, covariates, censor, n, p)
 }
 
 dlambda_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
