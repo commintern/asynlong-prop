@@ -8,10 +8,22 @@ using namespace std;
 
 // Test functions
 // [[Rcpp::export]]
-arma::uvec foo(arma::vec z) {
-  arma::uvec res = z > 0.5;
-  return res;
+
+arma::vec test1(Rcpp::ListOf<NumericMatrix>& X,n){
+  arma::vmat temp,res = arma::mat;
+  int i;
+  for(i=0;i<n;i++){
+    temp=mat(X[i].begin(),X[i].nrow(),X[i].ncol(),false);
+    res += sum(temp,1);
+  }
+
 }
+
+// // [[Rcpp::export]]
+// arma::uvec foo(arma::vec z) {
+//   arma::uvec res = z > 0.5;
+//   return res;
+// }
 
 // // [[Rcpp::export]]
 // NumericMatrix outerprotest1(NumericVector x,NumericVector y) {
@@ -235,34 +247,34 @@ arma::uvec foo(arma::vec z) {
 //   return sum(A,1);
 // }
 
-// [[Rcpp::export]]
-arma::vec con1(arma::vec A, double d, unsigned int p){
-  arma::vec v= A;
-  arma::vec::fixed<1> temp;
-  temp.fill(d);
-  v.insert_rows(p,temp);
-  return v;
-}
-
-// [[Rcpp::export]]
-arma::vec con2(arma::vec A, double d, unsigned int p){
-  arma::vec v= A;
-  arma::vec::fixed<1> temp;
-  temp.fill(d);
-  v = join_cols(v,temp);
-  return v;
-}
-
-
-// [[Rcpp::export]]
-arma::vec con3(arma::vec A, double d, unsigned int p){
-  arma::vec v= vec(p+1);
-
-  v.head(p) = vec(A.begin(),A.size(),false);
-  v(p) = d;
-  //v = join_cols(v,conv_to< arma::vec >::from(d));
-  return v;
-}
+// // [[Rcpp::export]]
+// arma::vec con1(arma::vec A, double d, unsigned int p){
+//   arma::vec v= A;
+//   arma::vec::fixed<1> temp;
+//   temp.fill(d);
+//   v.insert_rows(p,temp);
+//   return v;
+// }
+//
+// // [[Rcpp::export]]
+// arma::vec con2(arma::vec A, double d, unsigned int p){
+//   arma::vec v= A;
+//   arma::vec::fixed<1> temp;
+//   temp.fill(d);
+//   v = join_cols(v,temp);
+//   return v;
+// }
+//
+//
+// // [[Rcpp::export]]
+// arma::vec con3(arma::vec A, double d, unsigned int p){
+//   arma::vec v= vec(p+1);
+//
+//   v.head(p) = vec(A.begin(),A.size(),false);
+//   v(p) = d;
+//   //v = join_cols(v,conv_to< arma::vec >::from(d));
+//   return v;
+// }
 
 /*** R
 #testres <- microbenchmark::microbenchmark(outerprotest1(1:100,1:100),outerprotest2(1:100,1:100),outerprotest3(as.numeric(1:100),as.numeric(1:100)))

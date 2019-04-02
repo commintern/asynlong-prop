@@ -369,9 +369,23 @@ microbenchmark::microbenchmark(
 
 #######################################################################################
 
-testdata <- simdataone(100, 1, 1, 6,6,function(x)  exp(2),beta=-2,alpha=1,gamma=1,censor=1)
+testdata <- simdataone(100, 1, 1, 8,4,function(x)  exp(2),beta=-2,alpha=1,gamma=1.5,censor=1)
 
-testres <- estasy(testdata, NULL, 100 ^ (-0.6), 100, 1)
+hist(sapply(testdata, function(x) length(x$meas_times)),breaks = 100)
+hist(sapply(testdata, function(x) length(x$obscov_times)),breaks = 100)
+
+testres <- estasy(testdata, NULL, 100 ^ (-0.66), 100, 1)
+testres$gamma
+
+testres <- estasy_pur(testdata, NULL, 100 ^ (-0.66), 100, 1)
+testres$gamma
+
+testdata <- simdataone(100, 1, 1, 8,4,function(x)  exp(2),beta=-2,alpha=1,gamma=1.5,censor=1)
+debug(asymptotic)
+debug(estasy)
+debug(gammaest)
+testres <- estasy(testdata, NULL, 100 ^ (-0.7), 100, 1)
+testres$gamma
 
 covt <- sort(runif(8))
 z <- runif(20)
