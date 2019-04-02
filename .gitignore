@@ -9,3 +9,6 @@ debug.txt
 *.Rhistory
 *.RData
 .Rproj.user
+cluster.json
+credentials.json
+test/*.*

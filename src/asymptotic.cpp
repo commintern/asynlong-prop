@@ -320,11 +320,9 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
                       Rcpp::ListOf<NumericMatrix> &covariates,
                       Rcpp::ListOf<NumericMatrix> &Xbar,
                       Rcpp::ListOf<NumericVector> &XXtbar,
-                      Rcpp::ListOf<NumericVector> &gmu,
                       Rcpp::ListOf<NumericVector> &response,
                       const arma::mat &Hmat,
                       const arma::mat &Amat,
-                      Rcpp::ListOf<NumericVector> &lambda,
                       const arma::vec &censor,
                       const unsigned int &n,
                       const unsigned int &p)
@@ -371,8 +369,8 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
     //cout << "i: " << i << endl;
     temp_meas_time_i = vec(meas_times[i].begin(), meas_times[i].size(), false);
     temp_response = vec(response[i].begin(), response[i].size(), false);
-    temp_lambda = vec(lambda[i].begin(), lambda[i].size(), false);
-    gmu_temp = vec(gmu[i].begin(), gmu[i].size(), false);
+    // temp_lambda = vec(asylambda[i].begin(), lambda[i].size(), false);
+    // gmu_temp = vec(gmu[i].begin(), gmu[i].size(), false);
     //temp_dlambda = vec(dlambda[i].begin(), dlambda[i].size(), false);
     //temp_mu0 = vec(mu0[i].begin(), mu0[i].size(), false);
 
@@ -440,9 +438,9 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
 
           temp_part2 = temp_part2 + temp_kermat(j, k) * (X_temp.head(p) - Xbar_temp.row(j).head(p).t())*weight;
 
-          Rcpp::Rcout << "i: " << setw(2) << i << " j: " << setw(2) << j <<
-            " k: " << setw(2) << k << " ker: " << temp_kermat(j, k);
-          Rcpp::Rcout << " part2: " << weight<<  endl;
+          // Rcpp::Rcout << "i: " << setw(2) << i << " j: " << setw(2) << j <<
+          //   " k: " << setw(2) << k << " ker: " << temp_kermat(j, k);
+          // Rcpp::Rcout << " part2: " << weight<<  endl;
 
 
 
@@ -459,21 +457,20 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
 
     res_temp_ind = temp_part1 + HAi * temp_part2;
     V_temp = V_temp + temp_part2 * temp_part2.t();
-    zdiff(i) = as_scalar(temp_part2);
-    temp_part3 += temp_part2 * temp_part2;
+    //zdiff(i) = as_scalar(temp_part2);
+    //temp_part3 += temp_part2 * temp_part2;
     //res_temp_ind  = temp_part1;
     //cout << "Z: ";
     //cout << temp_part2.t() << endl;
     Sigmat = Sigmat + res_temp_ind * res_temp_ind.t();
   }
-  cout <<"============:" << temp_part3 << endl;
+  //cout <<"============:" << temp_part3 << endl;
   Sigmat = Sigmat;
   Bmat = Bmat;
   V_temp = V_temp;
   return Rcpp::List::create(Rcpp::Named("Sigmat") = Sigmat,
                             Rcpp::Named("Bmat") = Bmat,
-                            Rcpp::Named("Vmat") = V_temp,
-                            Rcpp::Named("zdiff") = zdiff);
+                            Rcpp::Named("Vmat") = V_temp);
 }
 
 // [[Rcpp::export]]

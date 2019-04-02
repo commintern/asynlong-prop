@@ -20,18 +20,27 @@ simdataone <- function(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,
   simdataoneres
 }
 
+# clusterEvalQ(cl,{
+#   library('asynlong')
+#   library("MASS")
+#   #library("reda")
+#   library("extraDistr")
+#   library("nleqslv")
+# })
 
 # Main parallel computing
 simmain <- function(nrep,nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor,horder) {
   #cat("Start: ")
-  simdatarep <- parLapply(cl,1:nrep,function(x) simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor))
+  simdatarep <- foreach(i = 1:nrep,.packages=c("asynlong","MASS","extraDistr","nleqslv")) %dopar% {
+    simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor)
+  }
   #simdatarep <- lapply(1:nrep,function(x) simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor))
-  simres <- foreach(simdata = simdatarep,.combine="rbind") %dopar% {
+  simres <- foreach(simdata = simdatarep,.combine="rbind",.packages=c("asynlong","MASS","extraDistr","nleqslv")) %dopar% {
 
-    simoneres <- estasy(simdata, NULL, nsample ^ (-horder), nsample, p)
+    simoneres <- estasy_pur(simdata, NULL, nsample ^ (-horder), nsample, p)
     CI_res <- simoneres$CI_theta
     Cp_ind <- (CI_res[,1] < c(gamma,beta,alpha)) * (CI_res[,2] > c(gamma,beta,alpha))
-    c(unlist(simoneres[c(1,4)]),as.vector(Cp_ind),as.vector(t(CI_res)))
+    c(simoneres[[1]],as.vector(Cp_ind),as.vector(t(CI_res)))
   }
   #print(simres)
   #cat("End: ")
@@ -40,7 +49,7 @@ simmain <- function(nrep,nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alph
 
 
 simrun <- function(nrep,nsample,p,infl=2,obscov_rate,lambda0_val,mu0,beta0,alpha0,gamma0,censor=1,horder) {
-  cat("Start: horder is",horder)
+  cat("PID: ", Sys.getpid(), " Start: ",format(Sys.time(), "%a %b %d %X %Y"))
   simres <- simmain(
     nrep = nrep,
     nsample = nsample,

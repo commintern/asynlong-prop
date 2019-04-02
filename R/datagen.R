@@ -11,6 +11,12 @@ simhomoPoipro <- function(rate, endTime) {
   return(sort(endTime * runif(num)))
 }
 
+# Simulate homogeneous poisson process
+simhomoPoipro_zero <- function(rate, endTime) {
+  num <- rpois(1, rate * endTime)
+  return(sort(endTime * runif(num)))
+}
+
 # Poisson process with stochastic intensity process is also called Cox process
 
 simCoxpro <-
@@ -93,7 +99,9 @@ simAsyLongdata <-
 
     Sigmat_z <- exp(-abs(outer(1:nstep, 1:nstep, "-")) / nstep)
 
-    z <- mvrnorm(p, rep(0, nstep), Sigmat_z)
+    z <- pnorm(mvrnorm(p, rep(0, nstep), Sigmat_z))
+
+    #z <- (z-min(z))/(max(z)-min(z))
 
     left_time_points <- (0:(nstep - 1)) / nstep
     lam_fun <-
@@ -109,7 +117,8 @@ simAsyLongdata <-
     lmax <- max(lambda0(left_time_points) * exp(gamma %*% z))
     #     # Make sure that the number of measurment times >0
     while (nmeas_time <= 0) {
-      meas_times <- simhomoPoipro(lmax, cen)
+      meas_times <- simhomoPoipro_zero(lmax, cen)
+      if(length(meas_times)==0) next
       meas_lam <- lam_fun(meas_times)
       selidx <- runif(length(meas_lam))  < meas_lam / lmax
       meas_times <- meas_times[selidx]

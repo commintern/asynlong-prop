@@ -68,7 +68,7 @@ asymptotic <-
         p
       )
 
-    print(Xbar_res$XXtbar[[1]])
+    #print(Xbar_res$XXtbar[[1]])
 
     #
     # S0_res <- Xbar_res$S0
@@ -102,7 +102,7 @@ asymptotic <-
         p = p
       )
 
-    print(H_A_res)
+    #print(H_A_res)
     # Pmat <- P_D_res$P
     # Dmat <- P_D_res$D
     # DO Not forget the kernel part
@@ -136,8 +136,25 @@ asymptotic <-
     #     n = n,
     #     p = p
     #   )
-    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% solve(Asymest$Bmat)
-    return(as.vector(thetahat) + cbind(-1 * qnorm(0.95) * sqrt(diag(varest)), qnorm(0.95) * sqrt(diag(varest))))
+    # Vtemp <- EEZV_c(
+    #   gamma = gammahat,
+    #   theta = thetahat,
+    #   kerMat = kerMat,
+    #   meas_times = meas_obs_list,
+    #   covariates = covar_list,
+    #   Xbar = Xbar_res$Xbar,
+    #   XXtbar = Xbar_res$XXtbar,
+    #   response = response_list,
+    #   Hmat = H_A_res$Hmat,
+    #   Amat = H_A_res$Amat,
+    #   censor = censor_list,
+    #   n = n,
+    #   p = p
+    # )
+    vargammaest <- solve(H_A_res$Amat, Asymest$Vmat) %*% t(solve(H_A_res$Amat))/n/h
+    #vargammaest <- solve(H_A_res$Amat, Vtemp) %*% t(solve(H_A_res$Amat))
+    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% t(solve(Asymest$Bmat))/n/h
+    return(rbind(as.vector(gammahat) + cbind(-1 * qnorm(0.975) * sqrt(diag(vargammaest)), qnorm(0.975) * sqrt(diag(vargammaest))),as.vector(thetahat) + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)), qnorm(0.975) * sqrt(diag(varest)))))
   }
 
 #kernel <- function(x,h) exp(-2*abs(x/h))/h
@@ -173,8 +190,17 @@ estasy <- function(dataset, kerFun, h, n, p) {
               censor_list,
               n,
               p)
+
+  time_order <- order(unlist(lambdaest_res[, 1]))
   Lambdaest_res <-
-    cbind(sort(unlist(lambdaest_res[, 1])), cumsum(unlist(lambdaest_res[, 2])[order(unlist(lambdaest_res[, 1]))]))
+    cbind(sort(unlist(lambdaest_res[, 1])), cumsum(unlist(lambdaest_res[, 2])[time_order]))
+
+  lambda_persub <- numeric(length(time_order))
+  lambda_persub[time_order] <- Lambdaest_res[,2]
+
+  lambda_persub <- split(lambda_persub,rep(1:n,sapply(lambdaest_res[,1],length)))
+
+  lambda_persub <- sapply(lambda_persub, function(x) diff(c(0,x)))
 
   response_list <- sapply(dataset, function(x)
     x[["Y"]])
@@ -199,6 +225,8 @@ estasy <- function(dataset, kerFun, h, n, p) {
              response_list,
              longest_res[[1]],
              gammaest_res$x,
+             lambda_persub,
+             longest_res[[2]],
              n,
              p,h)
 
@@ -217,9 +245,71 @@ estasy <- function(dataset, kerFun, h, n, p) {
   )
 }
 
-################################################################################################################
-#kernel <- function(x,h) exp(-2*abs(x/h))/h
-estasy_test <- function(dataset, kerFun, h, n, p) {
+#============ Purturbation ==========================
+
+gammaest_pur <-
+  function(kerMat,
+           meas_obs_list,
+           covar_list,
+           censor_list,
+           n,
+           p,
+           pur_weights) {
+    # U gamma wrapper
+    part1 <- ugamma1_pur_C(kerMat, covar_list, n, p, pur_weights)
+    ugamma <- function(gamma) {
+      part1 -
+        ugamma2_pur_C(gamma,
+                  kerMat,
+                  meas_obs_list,
+                  covar_list,
+                  censor_list,
+                  n,
+                  p,
+                  pur_weights)
+    }
+
+    gammaestres <- nleqslv(rep(0, p), ugamma)
+  }
+
+
+purtur_CI_one <-
+  function(kerMat,
+           meas_obs_list,
+           covar_list,
+           censor_list,
+           response_list,
+           n,
+           p,
+           pur_weights) {
+    #browser()
+    gammaest_res <-
+      gammaest_pur(kerMat,
+                   meas_obs_list,
+                   covar_list,
+                   censor_list,
+                   n,
+                   p,
+                   pur_weights)
+
+    longest_res <- longest_pur_c(
+      gamma = gammaest_res$x,
+      kerMat = kerMat,
+      meas_times = meas_obs_list,
+      covariates = covar_list,
+      response = response_list,
+      dlambda = NULL,
+      censor = censor_list,
+      n,
+      p,
+      pur_weights
+    )
+
+    return(c(gammaest_res$x, longest_res[[1]]))
+
+  }
+
+estasy_pur <- function(dataset, kerFun, h, n, p) {
   # transform data
   covar_list <- lapply(dataset, function(x)
     x[["covariates"]])
@@ -231,31 +321,57 @@ estasy_test <- function(dataset, kerFun, h, n, p) {
   censor_list <- sapply(dataset, function(x)
     x[["censoring"]])
 
+  response_list <- sapply(dataset, function(x)
+    x[["Y"]])
+
   # R realization, slow
   #kerMat <- apply(expand.grid(1:n,1:n),1, function(ind) kernelh(outermin_C(dataset[[ind[2]]][[2]],dataset[[ind[1]]][[4]]),h))
 
   kerMat <- kerMatgen_C(meas_obs_list, obscov_times_list, h)
 
-  #browser()
-  gammaest_res <-
-    gammaest(kerMat, meas_obs_list, covar_list, censor_list, n, p)
-  # TODO consider add error handling and logging if not converges
+  point_est <- purtur_CI_one(kerMat,
+             meas_obs_list,
+             covar_list,
+             censor_list,
+             response_list,
+             n,
+             p,
+             rep(1,n))
 
-  lambdaest_res <-
-    lambdaest(gammaest_res$x,
-              kerMat,
-              meas_obs_list,
-              covar_list,
-              censor_list,
-              n,
-              p)
-  Lambdaest_res <-
-    cbind(sort(unlist(lambdaest_res[, 1])), cumsum(unlist(lambdaest_res[, 2])[order(unlist(lambdaest_res[, 1]))]))
+  CI_asym <- asymptotic(kerMat,
+                        meas_obs_list,
+                        covar_list,
+                        censor_list,
+                        response_list,
+                        point_est[-(1:p)],
+                        point_est[1:p],
+                        n,
+                        p,h)
+  CIrep <- apply(matrix(rexp(500*n,rate=1),ncol=n),1,function(ww) purtur_CI_one(kerMat,
+                                                                 meas_obs_list,
+                                                                 covar_list,
+                                                                 censor_list,
+                                                                 response_list,
+                                                                 n,
+                                                                 p,
+                                                                 ww))
+
+  #vargammaest <- solve(H_A_res$Amat, Vtemp) %*% t(solve(H_A_res$Amat))
 
 
-  return(list(
-    gamma = gammaest_res$x,
-    lambda0 = lambdaest_res,
-    Lambda0 = Lambdaest_res
-  ))
+
+  varest <- var(t(CIrep))/n/h
+  CIres <- point_est + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)),
+                              qnorm(0.975) * sqrt(diag(varest)))
+
+
+
+  rm(kerMat)
+  return(
+    list(
+      point_est,
+      CI_theta = CIres,
+      CI_asym = CI_asym
+    )
+  )
 }

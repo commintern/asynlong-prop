@@ -9,8 +9,8 @@ H_A_c <- function(gamma, theta, kerMat, meas_times, covariates, response, Xbar, 
     .Call(`_asynlong_H_A_c`, gamma, theta, kerMat, meas_times, covariates, response, Xbar, XXtbar, XXtZbar, S0, censor, n, p)
 }
 
-long_asy_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, gmu, response, Hmat, Amat, lambda, censor, n, p) {
-    .Call(`_asynlong_long_asy_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, gmu, response, Hmat, Amat, lambda, censor, n, p)
+long_asy_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
+    .Call(`_asynlong_long_asy_c`, gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p)
 }
 
 EE_c <- function(gamma, theta, kerMat, meas_times, covariates, Xbar, XXtbar, response, Hmat, Amat, censor, n, p) {
@@ -37,6 +37,10 @@ longest_c <- function(gamma, kerMat, meas_times, covariates, response, dlambda, 
     .Call(`_asynlong_longest_c`, gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p)
 }
 
+longest_pur_c <- function(gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p, pur_weights) {
+    .Call(`_asynlong_longest_pur_c`, gamma, kerMat, meas_times, covariates, response, dlambda, censor, n, p, pur_weights)
+}
+
 optimtest <- function(z_in, gamma_in) {
     .Call(`_asynlong_optimtest`, z_in, gamma_in)
 }
@@ -45,24 +49,24 @@ ugamma1_C <- function(kerMat, covariates, n, p) {
     .Call(`_asynlong_ugamma1_C`, kerMat, covariates, n, p)
 }
 
-zbar_c <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
-    .Call(`_asynlong_zbar_c`, gamma, kerMat, meas_times, covariates, censor, n, p)
-}
-
 ugamma2_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
     .Call(`_asynlong_ugamma2_C`, gamma, kerMat, meas_times, covariates, censor, n, p)
 }
 
-ugamma2_C_n <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
-    .Call(`_asynlong_ugamma2_C_n`, gamma, kerMat, meas_times, covariates, censor, n, p)
+ugamma1_pur_C <- function(kerMat, covariates, n, p, pur_weights) {
+    .Call(`_asynlong_ugamma1_pur_C`, kerMat, covariates, n, p, pur_weights)
+}
+
+ugamma2_pur_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p, pur_weights) {
+    .Call(`_asynlong_ugamma2_pur_C`, gamma, kerMat, meas_times, covariates, censor, n, p, pur_weights)
 }
 
 dlambda_C <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
     .Call(`_asynlong_dlambda_C`, gamma, kerMat, meas_times, covariates, censor, n, p)
 }
 
-ugamma_C_1 <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
-    .Call(`_asynlong_ugamma_C_1`, gamma, kerMat, meas_times, covariates, censor, n, p)
+zbar_c <- function(gamma, kerMat, meas_times, covariates, censor, n, p) {
+    .Call(`_asynlong_zbar_c`, gamma, kerMat, meas_times, covariates, censor, n, p)
 }
 
 outermin_C <- function(x, y) {
