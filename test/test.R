@@ -380,6 +380,11 @@ testres$gamma
 testres <- estasy_pur(testdata, NULL, 100 ^ (-0.66), 100, 1)
 testres$gamma
 
+
+testdata <- simdataone(300, 1, 1, 8,4,function(x)  exp(2),beta=-2,alpha=1,gamma=1.5,censor=1)
+testres <- estasy_pur(testdata, NULL, 300 ^ (-0.6), 300, 1)
+testres
+
 testdata <- simdataone(100, 1, 1, 8,4,function(x)  exp(2),beta=-2,alpha=1,gamma=1.5,censor=1)
 debug(asymptotic)
 debug(estasy)

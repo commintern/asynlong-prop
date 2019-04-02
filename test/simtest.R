@@ -180,7 +180,7 @@ r1p <- simtemp(
 )
 
 r1p2 <- simtemp(
-  nrep = 100,
+  nrep = 400,
   nsample = 100,
   p = 1,
   infl = 1,
@@ -192,7 +192,7 @@ r1p2 <- simtemp(
   alpha0 = 1,
   gamma0 = 1.5,
   censor = 1,
-  horder = 0.3
+  horder = 0.66
 )
 
 r1p3 <- simtemp(

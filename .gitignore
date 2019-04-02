@@ -12,3 +12,5 @@ debug.txt
 cluster.json
 credentials.json
 test/*.*
+
+test/
