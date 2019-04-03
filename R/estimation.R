@@ -347,22 +347,19 @@ estasy_pur <- function(dataset, kerFun, h, n, p) {
                         point_est[1:p],
                         n,
                         p,h)
-  CIrep <- apply(matrix(rexp(500*n,rate=1),ncol=n),1,function(ww) purtur_CI_one(kerMat,
-                                                                 meas_obs_list,
-                                                                 covar_list,
-                                                                 censor_list,
-                                                                 response_list,
-                                                                 n,
-                                                                 p,
-                                                                 ww))
+  # CIrep <- apply(matrix(rexp(500*n,rate=1),ncol=n),1,function(ww) purtur_CI_one(kerMat,
+  #                                                                meas_obs_list,
+  #                                                                covar_list,
+  #                                                                censor_list,
+  #                                                                response_list,
+  #                                                                n,
+  #                                                                p,
+  #                                                                ww))
+  # varest <- var(t(CIrep))/n/h
+  # CIres <- point_est + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)),
+  #                             qnorm(0.975) * sqrt(diag(varest)))
 
-  #vargammaest <- solve(H_A_res$Amat, Vtemp) %*% t(solve(H_A_res$Amat))
-
-
-
-  varest <- var(t(CIrep))/n/h
-  CIres <- point_est + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)),
-                              qnorm(0.975) * sqrt(diag(varest)))
+  CIres <- CI_asym
 
 
 
@@ -370,8 +367,8 @@ estasy_pur <- function(dataset, kerFun, h, n, p) {
   return(
     list(
       point_est,
-      CI_theta = CIres,
-      CI_asym = CI_asym
+      CI_theta = CI_asym,
+      CI_alter = CIres
     )
   )
 }
