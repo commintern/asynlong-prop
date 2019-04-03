@@ -370,8 +370,8 @@ estasy_pur <- function(dataset, kerFun, h, n, p) {
   return(
     list(
       point_est,
-      CI_theta = CIres,
-      CI_asym = CI_asym
+      CI_theta = CI_asym,
+      CI_alter = CIres
     )
   )
 }
