@@ -31,11 +31,11 @@ simdataone <- function(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,
 # Main parallel computing
 simmain <- function(nrep,nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor,horder) {
   #cat("Start: ")
-  simdatarep <- foreach(i = 1:nrep,.packages=c("asynlong","MASS","extraDistr","nleqslv")) %dopar% {
+  simdatarep <- foreach(i = 1:nrep,.packages=c("asynlong","MASS","extraDistr","nleqslv"),.errorhandling = "remove") %dopar% {
     simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor)
   }
   #simdatarep <- lapply(1:nrep,function(x) simdataone(nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alpha,gamma,censor))
-  simres <- foreach(simdata = simdatarep,.combine="rbind",.packages=c("asynlong","MASS","extraDistr","nleqslv")) %dopar% {
+  simres <- foreach(simdata = simdatarep,.combine="rbind",.packages=c("asynlong","MASS","extraDistr","nleqslv"),.errorhandling = "remove") %dopar% {
 
     simoneres <- estasy_pur(simdata, NULL, nsample ^ (-horder), nsample, p)
     CI_res <- simoneres$CI_theta
