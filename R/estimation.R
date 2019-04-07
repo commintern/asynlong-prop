@@ -151,9 +151,9 @@ asymptotic <-
     #   n = n,
     #   p = p
     # )
-    vargammaest <- solve(H_A_res$Amat, Asymest$Vmat) %*% t(solve(H_A_res$Amat))
+    vargammaest <- solve(H_A_res$Amat, Asymest$Vmat) %*% t(solve(H_A_res$Amat))/n/h
     #vargammaest <- solve(H_A_res$Amat, Vtemp) %*% t(solve(H_A_res$Amat))
-    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% t(solve(Asymest$Bmat))
+    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% t(solve(Asymest$Bmat))/n/h
     return(rbind(as.vector(gammahat) + cbind(-1 * qnorm(0.975) * sqrt(diag(vargammaest)), qnorm(0.975) * sqrt(diag(vargammaest))),as.vector(thetahat) + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)), qnorm(0.975) * sqrt(diag(varest)))))
   }
 
