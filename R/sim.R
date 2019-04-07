@@ -40,7 +40,9 @@ simmain <- function(nrep,nsample, p, infl, obscov_rate,lambda0_val,mu0,beta,alph
     simoneres <- estasy_pur(simdata, NULL, nsample ^ (-horder), nsample, p)
     CI_res <- simoneres$CI_theta
     Cp_ind <- (CI_res[,1] < c(gamma,beta,alpha)) * (CI_res[,2] > c(gamma,beta,alpha))
-    c(simoneres[[1]],as.vector(Cp_ind),as.vector(t(CI_res)))
+    CI_res_pur <- simoneres$CI_pur
+    Cp_ind_pur <- (CI_res_pur[,1] < c(gamma,beta,alpha)) * (CI_res_pur[,2] > c(gamma,beta,alpha))
+    c(simoneres[[1]],as.vector(Cp_ind),as.vector(t(CI_res)),as.vector(Cp_ind_pur),as.vector(t(CI_res_pur)))
   }
   #print(simres)
   #cat("End: ")

@@ -151,9 +151,9 @@ asymptotic <-
     #   n = n,
     #   p = p
     # )
-    vargammaest <- solve(H_A_res$Amat, Asymest$Vmat) %*% t(solve(H_A_res$Amat))/n/h
+    vargammaest <- solve(H_A_res$Amat, Asymest$Vmat) %*% t(solve(H_A_res$Amat))
     #vargammaest <- solve(H_A_res$Amat, Vtemp) %*% t(solve(H_A_res$Amat))
-    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% t(solve(Asymest$Bmat))/n/h
+    varest <- solve(Asymest$Bmat, Asymest$Sigma) %*% t(solve(Asymest$Bmat))
     return(rbind(as.vector(gammahat) + cbind(-1 * qnorm(0.975) * sqrt(diag(vargammaest)), qnorm(0.975) * sqrt(diag(vargammaest))),as.vector(thetahat) + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)), qnorm(0.975) * sqrt(diag(varest)))))
   }
 
@@ -347,19 +347,19 @@ estasy_pur <- function(dataset, kerFun, h, n, p) {
                         point_est[1:p],
                         n,
                         p,h)
-  # CIrep <- apply(matrix(rexp(500*n,rate=1),ncol=n),1,function(ww) purtur_CI_one(kerMat,
-  #                                                                meas_obs_list,
-  #                                                                covar_list,
-  #                                                                censor_list,
-  #                                                                response_list,
-  #                                                                n,
-  #                                                                p,
-  #                                                                ww))
-  # varest <- var(t(CIrep))/n/h
-  # CIres <- point_est + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)),
-  #                             qnorm(0.975) * sqrt(diag(varest)))
+  CIrep <- apply(matrix(rexp(500*n,rate=1),ncol=n),1,function(ww) purtur_CI_one(kerMat,
+                                                                 meas_obs_list,
+                                                                 covar_list,
+                                                                 censor_list,
+                                                                 response_list,
+                                                                 n,
+                                                                 p,
+                                                                 ww))
+  varest <- var(t(CIrep))
+  CIres <- point_est + cbind(-1 * qnorm(0.975) * sqrt(diag(varest)),
+                              qnorm(0.975) * sqrt(diag(varest)))
 
-  CIres <- CI_asym
+  #CIres <- CI_asym
 
 
 
@@ -368,7 +368,7 @@ estasy_pur <- function(dataset, kerFun, h, n, p) {
     list(
       point_est,
       CI_theta = CI_asym,
-      CI_alter = CIres
+      CI_pur = CIres
     )
   )
 }
