@@ -15,3 +15,5 @@ test/*.*
 test/
 azuredo.R
 tres5mc.csv
+*.json
+*.rds
