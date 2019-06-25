@@ -129,7 +129,7 @@ simAsyLongdata <-
 
     # 5.Generate responses Y
     response <-
-      simresponse(meas_times, covariates_meas, beta, alpha, mu0, linkfun = log)
+      simresponse(meas_times, covariates_meas, beta, alpha, mu0, linkfun = function(x) x)
 
 
 
