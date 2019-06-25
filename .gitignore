@@ -17,3 +17,5 @@ azuredo.R
 tres5mc.csv
 *.json
 *.rds
+*.xlsx
+*.csv
