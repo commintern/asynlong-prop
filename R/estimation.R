@@ -228,10 +228,7 @@ estasy <- function(dataset, kerFun, h, n, p) {
   rm(kerMat)
   return(
     list(
-      gamma = gammaest_res$x,
-      #lambda0 = lambdaest_res$x,
-      #Lambda0 = Lambdaest_res,
-      thetaest = longest_res[[1]],
+      point_est = c(gammaest_res$x, thetaest = longest_res[[1]]),
       #gmu0est = longest_res[[2]],
       CI_theta = CI_theta
     )
