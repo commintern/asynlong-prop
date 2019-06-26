@@ -374,7 +374,7 @@ Rcpp::List H_A_prop_c(const arma::rowvec &gamma,
   arma::vec censorind, temp_S0;
   arma::mat Xbar_temp,Zbar_temp;
   arma::cube XXtbar_temp, ZZtbar_temp,XZtbar_temp;
-  arma::mat Xbar_dev_temp;
+  //arma::mat Xbar_dev_temp;
   arma::vec S0_temp;
 
   unsigned int j, k, Jn, Kn;
@@ -400,7 +400,7 @@ Rcpp::List H_A_prop_c(const arma::rowvec &gamma,
 
     XXtbar_temp = arma::cube(XXtbar[i].begin(), p + 1, p + 1, Jn, false);
 
-    ZZtbar_temp = arma::cube(XXtbar[i].begin(), p, p, Jn, false);
+    ZZtbar_temp = arma::cube(ZZtbar[i].begin(), p, p, Jn, false);
 
 
     XZtbar_temp = arma::cube(XZtbar[i].begin(), p + 1, p, Jn, false);
