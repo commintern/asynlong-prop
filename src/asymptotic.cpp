@@ -421,7 +421,7 @@ Rcpp::List H_A_prop_c(const arma::rowvec &gamma,
           // Calculate H
 
           H_temp = H_temp - temp_kermat(j, k) * temp_response(j) * (XZtbar_temp.slice(j) -
-            Xbar_temp.row(j).t() * Xbar_temp.row(j).head(p));
+            Xbar_temp.row(j).t() * Zbar_temp.row(j));
 
           A_temp = A_temp + temp_kermat(j, k) * (ZZtbar_temp.slice(j) -
             Zbar_temp.row(j).t() * Zbar_temp.row(j));
