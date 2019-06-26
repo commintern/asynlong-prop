@@ -49,7 +49,7 @@ Rcpp::List Xbar_prop_c(const arma::rowvec &gamma,
   arma::uvec temp_uvec;
 
   arma::uvec temp_counting;
-  double S0_temp;
+  double S0_temp,S0_z_temp;
 
   unsigned int j, k, Jn, Kn;
 
@@ -69,8 +69,10 @@ Rcpp::List Xbar_prop_c(const arma::rowvec &gamma,
       Xbar_temp = vec(p + 1, arma::fill::zeros);
       Zbar_temp = vec(p, arma::fill::zeros);
       S0_temp = 0;
+      S0_z_temp =0;
       XXtbar_temp = mat(p + 1, p + 1, arma::fill::zeros);
       XZtbar_temp = mat(p + 1, p, arma::fill::zeros);
+      ZZtbar_temp = mat(p, p, arma::fill::zeros);
 
       for (l = 0; l < n; l++)
       {
@@ -105,6 +107,7 @@ Rcpp::List Xbar_prop_c(const arma::rowvec &gamma,
               ZZtbar_temp = ZZtbar_temp + X_temp.head(p) * X_temp.head(p).t() * weight_z;
 
               S0_temp = S0_temp + weight;
+              S0_z_temp = S0_z_temp + weight_z;
             }
           }
         }
@@ -119,9 +122,9 @@ Rcpp::List Xbar_prop_c(const arma::rowvec &gamma,
 
         temp_XZtbar_list.slice(j) = XZtbar_temp / S0_temp;
 
-        temp_Zbar_list.row(j) = trans(Zbar_temp / S0_temp);
+        temp_Zbar_list.row(j) = trans(Zbar_temp / S0_z_temp);
 
-        temp_ZZtbar_list.slice(j) = ZZtbar_temp / S0_temp;
+        temp_ZZtbar_list.slice(j) = ZZtbar_temp / S0_z_temp;
       }
     }
     Xbar_list(i) = temp_Xbar_list;
@@ -421,7 +424,7 @@ Rcpp::List H_A_prop_c(const arma::rowvec &gamma,
           // Calculate H
 
           H_temp = H_temp - temp_kermat(j, k) * temp_response(j) * (XZtbar_temp.slice(j) -
-            Xbar_temp.row(j).t() * Zbar_temp.row(j));
+            Xbar_temp.row(j).t() * Xbar_temp.row(j).head(p));
 
           A_temp = A_temp + temp_kermat(j, k) * (ZZtbar_temp.slice(j) -
             Zbar_temp.row(j).t() * Zbar_temp.row(j));
@@ -590,13 +593,13 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
     res_temp_ind = temp_part1 + HAi * temp_part2;
     V_temp = V_temp + temp_part2 * temp_part2.t();
     //zdiff(i) = as_scalar(temp_part2);
-    //temp_part3 += temp_part2 * temp_part2;
+    temp_part3 += temp_part2;
     //res_temp_ind  = temp_part1;
     //cout << "Z: ";
     //cout << temp_part2.t() << endl;
     Sigmat = Sigmat + res_temp_ind * res_temp_ind.t();
   }
-  //cout <<"============:" << temp_part3 << endl;
+  cout <<"============:" << temp_part3 << endl;
   Sigmat = Sigmat;
   Bmat = Bmat;
   V_temp = V_temp;
