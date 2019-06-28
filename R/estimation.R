@@ -34,7 +34,7 @@ longest_prop <-
            p) {
 
 
-    longestres <- nleqslv(rep(0, p+1), function(tt) longest_prop_c(theta=tt,
+    longestres <- nleqslv(c(-2,0.1), function(tt) longest_prop_c(theta=tt,
       gamma = gammaest,
       kerMat = kerMat,
       meas_times = meas_obs_list,

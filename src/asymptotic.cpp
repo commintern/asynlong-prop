@@ -491,7 +491,7 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
   unsigned int j, k, Jn, Kn;
   X_temp = vec(p + 1, arma::fill::zeros);
 
-  temp_part3 = vec(p, arma::fill::zeros);
+  temp_part3 = vec(p+1, arma::fill::zeros);
 
   arma::vec zdiff = vec(n,arma::fill::zeros);
 
@@ -555,7 +555,7 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
 
           temp_X_diff = XXtbar_temp.slice(j) - Xbar_temp.row(j).t() * Xbar_temp.row(j);
 
-          Bmat = Bmat - temp_kermat(j, k) * temp_X_diff;
+          Bmat = Bmat - temp_kermat(j, k) * temp_response(j) * temp_X_diff;
 
           //temp_X_diff = X_temp - trans(Xbar_temp.row(j));
           ////================= PART 1 ===================////
@@ -593,7 +593,7 @@ Rcpp::List long_asy_c(const arma::rowvec &gamma,
     res_temp_ind = temp_part1 + HAi * temp_part2;
     V_temp = V_temp + temp_part2 * temp_part2.t();
     //zdiff(i) = as_scalar(temp_part2);
-    temp_part3 += temp_part2;
+    temp_part3 += temp_part1;
     //res_temp_ind  = temp_part1;
     //cout << "Z: ";
     //cout << temp_part2.t() << endl;
