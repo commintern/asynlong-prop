@@ -90,7 +90,7 @@ simAsyLongdata <-
     p <- length(beta)
 
     # 0. Generate censoring times??
-    # cen <- runif(1,0.8,1)
+    cen <- runif(1,cen,1)
 
     # 1. Generate observation times for covariates
     obscov_times <- simhomoPoipro(obscov_rate, cen)
