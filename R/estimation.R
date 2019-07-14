@@ -149,6 +149,8 @@ estasy <- function(dataset, kerFun, h, n, p) {
   censor_list <- sapply(dataset, function(x)
     x[["censoring"]])
 
+  print(which.max(unlist(censor_list)))
+
   # R realization, slow
   #kerMat <- apply(expand.grid(1:n,1:n),1, function(ind) kernelh(outermin_C(dataset[[ind[2]]][[2]],dataset[[ind[1]]][[4]]),h))
 
