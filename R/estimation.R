@@ -21,7 +21,7 @@ gammaest <-
         ugamma2_C(gamma, kerMat, meas_obs_list, covar_list, censor_list, n, p)
     }
 
-    gammaestres <- nleqslv(rep(0, p), ugamma)
+    gammaestres <- nleqslv(rep(1.5, p), ugamma)
   }
 
 longest_prop <-
