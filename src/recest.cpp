@@ -85,6 +85,7 @@ arma::vec ugamma2_C(const arma::rowvec& gamma,
     }
     temp_kermat = mat(kerMat[i * n + i].begin(),kerMat[i * n + i].nrow(),kerMat[i * n + i].ncol(),false);
     zbar_temp_i.each_col() /= den_temp;
+    zbar_temp_i.replace(datum::nan, 0);
     res += zbar_temp_i.t() * sum(temp_kermat,1);
     if (res.has_nan()){
       cout << i << endl;
